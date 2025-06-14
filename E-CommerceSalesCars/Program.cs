@@ -1,4 +1,8 @@
 
+using E_CommerceSalesCars.Persistencia.Data;
+using Microsoft.EntityFrameworkCore;
+using System;
+
 namespace E_CommerceSalesCars
 {
     public class Program
@@ -13,6 +17,10 @@ namespace E_CommerceSalesCars
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddDbContext<MyDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
 
             var app = builder.Build();
 
