@@ -23,5 +23,44 @@ namespace E_CommerceSalesCars.Persistencia.Data
         public DbSet<Transaccion> Transacciones { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Vehiculo> Vehiculos { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Oferta>()
+                .HasOne(o => o.CompradorOferta)
+                .WithMany(u => u.OfertasRealizadadas)
+                .HasForeignKey(o => o.CompradorId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Oferta>()
+                .HasOne(o => o.Publicacion)
+                .WithMany(p => p.Ofertas)
+                .HasForeignKey(o => o.PublicacionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Transaccion>()
+                .HasOne(t => t.CompradorTransaccion)
+                .WithMany(u => u.Compras)
+                .HasForeignKey(t => t.CompradorId)
+                .OnDelete(DeleteBehavior.NoAction); // ❗ Quitamos cascada
+
+            modelBuilder.Entity<Transaccion>()
+                .HasOne(t => t.Vendedor)
+                .WithMany(u => u.Ventas)
+                .HasForeignKey(t => t.VendedorId)
+                .OnDelete(DeleteBehavior.NoAction); // ❗ También quitamos cascada (opcional pero recomendable)
+
+            modelBuilder.Entity<Transaccion>()
+                .HasOne(t => t.Publicacion)
+                .WithMany()
+                .HasForeignKey(t => t.PublicacionId)
+                .OnDelete(DeleteBehavior.Cascade); // ✅ Mantenemos cascada solo acá si querés
+        }
+
     }
+
 }

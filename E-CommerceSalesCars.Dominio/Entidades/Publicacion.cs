@@ -30,11 +30,6 @@ namespace E_CommerceSalesCars.Dominio.Entidades
         [Required]
         public EstadoPublicacion Estado { get; set; }
 
-        public int? TransaccionId { get; set; }
-
-        [ForeignKey("TransaccionId")]
-        public Transaccion Transaccion { get; set; }
-
         public int VehiculoId { get; set; }
         [ForeignKey("VehiculoId")]
         public Vehiculo Vehiculo { get; set; }

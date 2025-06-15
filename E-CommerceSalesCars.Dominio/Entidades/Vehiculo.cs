@@ -34,10 +34,6 @@ namespace E_CommerceSalesCars.Dominio.Entidades
         [Required]
         [StringLength(30)]
         public string Color { get; set; }
-        public int PublicacionId { get; set; }
-
-        [ForeignKey("PublicacionId")]
-        public Publicacion Publicacion { get; set; }
 
         [Required]
         public ICollection<ImagenVehiculo> Imagenes { get; set; } = new List<ImagenVehiculo>();

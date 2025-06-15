@@ -5,6 +5,7 @@
     <RootNamespace>E_CommerceSalesCars.Persistencia</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <UserSecretsId>7792503e-db15-477f-b139-f9d4226155a0</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
