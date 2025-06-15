@@ -13,17 +13,21 @@ namespace E_CommerceSalesCars.Dominio.Entidades
     {
         [Key]
         public int Id { get; set; }
-        [Required]
+        [StringLength(100)]
         public string Name { get; set; }
-        [Required]
+        [EmailAddress]
         public string Email { get; set;}
-        [Required]
+        [Phone]
         public string Telefono { get; set;}
 
-        [InverseProperty("Comprador")]
+        [InverseProperty("CompradorTransaccion")]
         public ICollection<Transaccion> Compras { get; set;} = new List<Transaccion>();
 
         [InverseProperty("Vendedor")]
         public ICollection<Transaccion> Ventas { get; set; } = new List<Transaccion>();
+
+        [InverseProperty("CompradorOferta")]
+        public ICollection<Oferta> OfertasRealizadadas { get; set; }
+        protected Usuario() {}
     }
 }

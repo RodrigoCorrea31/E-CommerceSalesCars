@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,8 +18,10 @@ namespace E_CommerceSalesCars.Dominio.Entidades
         [Key]
         public int Id { get; set; }
         [Required]
+        [StringLength(150, ErrorMessage = "El titulo no debe contener mas de 150 caracteres.")]
         public string Titulo { get; set; }
         [Required]
+        [Range(0, double.MaxValue, ErrorMessage = "El precio no debe ser menor a 0.")]
         public decimal Precio { get; set; }
         [Required]
         public DateTime Fecha { get; set; }
@@ -27,13 +30,20 @@ namespace E_CommerceSalesCars.Dominio.Entidades
         [Required]
         public EstadoPublicacion Estado { get; set; }
 
+        public int? TransaccionId { get; set; }
+
+        [ForeignKey("TransaccionId")]
         public Transaccion Transaccion { get; set; }
 
         public int VehiculoId { get; set; }
+        [ForeignKey("VehiculoId")]
         public Vehiculo Vehiculo { get; set; }
 
         public int UsuarioId { get; set; }
+        [ForeignKey("UsuarioId")]
         public Usuario Usuario { get; set; }
+
+        public ICollection<Oferta> Ofertas { get; set; } = new List<Oferta>();
 
     }
 }

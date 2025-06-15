@@ -13,8 +13,11 @@ namespace E_CommerceSalesCars.Dominio.Entidades
         [Key]
         public int Id { get; set; }
         [Required]
+        [StringLength(300, ErrorMessage = "La URL no debe tener mas de 300 caracteres.")]
         public string Url { get; set; }
-
+        public int Orden { get; set; }
+        public bool EsPrincipal { get; set; }
+        [Required]
         public int VehiculoId { get; set; }
 
         [ForeignKey("VehiculoId")]

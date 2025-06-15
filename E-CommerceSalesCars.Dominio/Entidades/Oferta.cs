@@ -20,15 +20,17 @@ namespace E_CommerceSalesCars.Dominio.Entidades
         [Key]
         public int Id { get; set; }
         [Required]
+        [Range(0.01, double.MaxValue, ErrorMessage = "El monto debe ser mayor a 0.")]
         public decimal Monto { get; set; }
         [Required]
         public DateTime Fecha { get; set; }
+        public DateTime? FechaRespuesta { get; set; }
         [Required]
         public EstadoOferta Estado { get; set; }
         public int CompradorId { get; set; }
 
         [ForeignKey("CompradorId")]
-        public Usuario Comprador { get; set; }
+        public Usuario CompradorOferta { get; set; }
 
         public int PublicacionId { get; set; }
 
