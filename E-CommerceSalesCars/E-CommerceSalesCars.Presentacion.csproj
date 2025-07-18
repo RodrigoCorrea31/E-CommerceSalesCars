@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\E-CommerceSalesCars.Dominio\E-CommerceSalesCars.Dominio.csproj" />
-    <ProjectReference Include="..\E-CommerceSalesCars.Infraestructura\E-CommerceSalesCars.Infraestructura.csproj" />
+    <ProjectReference Include="..\E-CommerceSalesCars.Infraestructura\E-CommerceSalesCars.Aplicacion.csproj" />
     <ProjectReference Include="..\E-CommerceSalesCars.Persistencia\E-CommerceSalesCars.Persistencia.csproj" />
   </ItemGroup>
 
