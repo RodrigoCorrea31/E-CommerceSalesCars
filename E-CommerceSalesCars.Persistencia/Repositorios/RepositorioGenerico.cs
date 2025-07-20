@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,7 +26,7 @@ namespace E_CommerceSalesCars.Persistencia.Repositorios
             return await _dbset.FindAsync(id);
         }
 
-        public async Task<IEnumerable<E>> ListarTodosAsync()
+        public async Task<ICollection<E>> ListarTodosAsync()
         {
             return await _dbset.ToListAsync();
         }
@@ -43,6 +44,11 @@ namespace E_CommerceSalesCars.Persistencia.Repositorios
         public void ModificarAsync(E entidad)
         {
             _dbset.Update(entidad);
+        }
+
+        public async Task<ICollection<E>> ObtenerPorFiltroAsync(Expression<Func<E, bool>>filtro)
+        {
+            return await _dbset.Where(filtro).ToListAsync();
         }
     }
 }
