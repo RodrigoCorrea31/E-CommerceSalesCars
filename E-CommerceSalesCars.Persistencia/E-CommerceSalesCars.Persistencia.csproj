@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\E-CommerceSalesCars.Dominio\E-CommerceSalesCars.Dominio.csproj" />
+    <ProjectReference Include="..\E-CommerceSalesCars.Infraestructura\E-CommerceSalesCars.Aplicacion.csproj" />
   </ItemGroup>
 
 </Project>
