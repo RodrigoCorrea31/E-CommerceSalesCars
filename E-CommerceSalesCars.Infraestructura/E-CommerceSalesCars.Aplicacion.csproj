@@ -24,8 +24,4 @@
     <ProjectReference Include="..\E-CommerceSalesCars.Dominio\E-CommerceSalesCars.Dominio.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Servicios\" />
-  </ItemGroup>
-
 </Project>
