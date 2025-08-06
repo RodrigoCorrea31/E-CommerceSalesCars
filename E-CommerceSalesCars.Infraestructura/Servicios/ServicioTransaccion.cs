@@ -1,5 +1,6 @@
 ﻿using E_CommerceSalesCars.Dominio.Entidades;
 using E_CommerceSalesCars.Dominio.Interfaces;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +13,13 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
     {
         private readonly IRepositorioTransaccion _repositorioTransaccion;
         private readonly IRepositorioGenerico<Transaccion> _repositorioGenericoTransaccion;
+        private readonly ILogger _logger;
 
-        public ServicioTransaccion (IRepositorioTransaccion repositorioTransaccion, IRepositorioGenerico<Transaccion> repositorioGenericoTransaccion)
+        public ServicioTransaccion (IRepositorioTransaccion repositorioTransaccion, IRepositorioGenerico<Transaccion> repositorioGenericoTransaccion, ILogger logger)
         {
             _repositorioTransaccion = repositorioTransaccion;
             _repositorioGenericoTransaccion = repositorioGenericoTransaccion;
+            _logger = logger;
         }
 
         public async Task FinalizarTransaccionAsync (int transaccionId)
@@ -38,6 +41,8 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
             }
 
             await _repositorioTransaccion.FinalizarTransaccionAsync(transaccionId);
+
+            _logger.LogInformation("Finalizada la transaccion.");
         }
     }
 }
