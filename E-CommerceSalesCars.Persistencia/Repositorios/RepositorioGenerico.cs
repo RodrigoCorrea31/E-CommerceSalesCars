@@ -46,6 +46,14 @@ namespace E_CommerceSalesCars.Persistencia.Repositorios
             _dbset.Update(entidad);
         }
 
+        public async Task ActualizarAsync(E entidad)
+        {
+            _dbset.Update(entidad);
+            await _context.SaveChangesAsync();
+        }
+
+
+
         public async Task<ICollection<E>> ObtenerPorFiltroAsync(Expression<Func<E, bool>>filtro)
         {
             return await _dbset.Where(filtro).ToListAsync();

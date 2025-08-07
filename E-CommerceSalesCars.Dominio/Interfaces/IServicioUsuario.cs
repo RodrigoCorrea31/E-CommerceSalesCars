@@ -9,11 +9,11 @@ namespace E_CommerceSalesCars.Dominio.Interfaces
 {
     public interface IServicioUsuario
     {
-        Task RegistrarUsuarioAsync(string nombreUsuario, string email, string contraseña);
+        Task RegistrarUsuarioAsync(string tipoUsuario, string nombre, string email, string telefono, string contrasena, string datoExtra1, string datoExtra2)
         Task<Usuario> LoginAsync(string email, string contraseña);
-        Task<List<Oferta>> ObtenerOfertasRealizadasAsync(int usuarioId);
-        Task<List<Transaccion>> ObtenerComprasAsync(int usuarioId);
-        Task<List<Transaccion>> ObtenerVentasAsync(int usuarioId);
+        Task<ICollection<Oferta>> ObtenerOfertasRealizadasAsync(int usuarioId);
+        Task<ICollection<Transaccion>> ObtenerComprasAsync(int usuarioId);
+        Task<ICollection<Transaccion>> ObtenerVentasAsync(int usuarioId);
         Task ComprarVehiculoAsync(int usuarioId, int publicacionId, decimal monto);
     }
 }

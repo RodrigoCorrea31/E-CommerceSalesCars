@@ -13,12 +13,14 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
     {
         private readonly IRepositorioTransaccion _repositorioTransaccion;
         private readonly IRepositorioGenerico<Transaccion> _repositorioGenericoTransaccion;
+        private readonly IRepositorioGenerico<Usuario> _repositorioGenericoUsuario;
         private readonly ILogger _logger;
 
-        public ServicioTransaccion (IRepositorioTransaccion repositorioTransaccion, IRepositorioGenerico<Transaccion> repositorioGenericoTransaccion, ILogger logger)
+        public ServicioTransaccion (IRepositorioTransaccion repositorioTransaccion, IRepositorioGenerico<Transaccion> repositorioGenericoTransaccion, IRepositorioGenerico<Usuario> repositorioGenericoUsuario, ILogger logger)
         {
             _repositorioTransaccion = repositorioTransaccion;
             _repositorioGenericoTransaccion = repositorioGenericoTransaccion;
+            _repositorioGenericoUsuario = repositorioGenericoUsuario;
             _logger = logger;
         }
 
@@ -29,20 +31,37 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
                 throw new ArgumentException("El id ingresado no  es válido.", nameof(transaccionId));
             }
 
-            var transaccionExiste = await _repositorioGenericoTransaccion.ObtenerPorIdAsync(transaccionId);
-            if (transaccionExiste == null)
+            var transaccion = await _repositorioGenericoTransaccion.ObtenerPorIdAsync(transaccionId);
+            if (transaccion == null)
             {
                 throw new InvalidOperationException("La transaccion que se intenta finalizar no existe.");
             }
 
-            if (transaccionExiste.Estado == EstadoTransaccion.Finalizada)
+            if (transaccion.Estado == EstadoTransaccion.Finalizada)
             {
                 throw new InvalidOperationException("Esta transaccion ya fue finalizada.");
             }
 
-            await _repositorioTransaccion.FinalizarTransaccionAsync(transaccionId);
 
-            _logger.LogInformation("Finalizada la transaccion.");
+            transaccion.Estado = EstadoTransaccion.Finalizada;
+            transaccion.FechaFinalizacion = DateTime.UtcNow;
+
+            var comprador = await _repositorioGenericoUsuario.ObtenerPorIdAsync(transaccion.CompradorId);
+            var vendedor = await _repositorioGenericoUsuario.ObtenerPorIdAsync(transaccion.VendedorId);
+
+            if (comprador == null || vendedor == null)
+            {
+                throw new InvalidOperationException("No se encontró el comprador o el vendedor.");
+            }
+
+            comprador.Compras.Add(transaccion);
+            vendedor.Ventas.Add(transaccion);
+
+            await _repositorioGenericoTransaccion.ActualizarAsync(transaccion);
+            await _repositorioGenericoUsuario.ActualizarAsync(comprador);
+            await _repositorioGenericoUsuario.ActualizarAsync(vendedor);
+
+            _logger.LogInformation($"Transacción con ID {transaccionId} finalizada correctamente.");
         }
     }
 }

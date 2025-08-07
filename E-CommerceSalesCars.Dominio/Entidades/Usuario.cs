@@ -20,6 +20,9 @@ namespace E_CommerceSalesCars.Dominio.Entidades
         [Phone]
         public string Telefono { get; set;}
 
+        [Required]
+        public string ContrasenaHash { get; set; }
+
         [InverseProperty("CompradorTransaccion")]
         public ICollection<Transaccion> Compras { get; set;} = new List<Transaccion>();
 
