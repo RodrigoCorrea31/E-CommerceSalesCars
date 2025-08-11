@@ -1,6 +1,5 @@
 ﻿using E_CommerceSalesCars.Dominio.Entidades;
 using E_CommerceSalesCars.Dominio.Interfaces;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,14 +14,12 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
         private readonly IRepositorioPublicacion _repositorioPublicacion;
         private readonly IRepositorioGenerico<Publicacion> _repositorioGenericoPublicacion;
         private readonly IRepositorioGenerico<Usuario> _repositorioGenericoUsuario;
-        private readonly ILogger _logger;
 
-        public ServicioPublicacion(IRepositorioPublicacion repositorioPublicacion, IRepositorioGenerico<Usuario> repositorioGenericoUsuario, IRepositorioGenerico<Publicacion> repositorioGenericoPublicacion, ILogger logger)
+        public ServicioPublicacion(IRepositorioPublicacion repositorioPublicacion, IRepositorioGenerico<Usuario> repositorioGenericoUsuario, IRepositorioGenerico<Publicacion> repositorioGenericoPublicacion)
         {
             _repositorioPublicacion = repositorioPublicacion;
             _repositorioGenericoPublicacion = repositorioGenericoPublicacion;
             _repositorioGenericoUsuario = repositorioGenericoUsuario;
-            _logger = logger;
         }
         public async Task CrearPublicacionAsync(Publicacion publicacion)
         {
@@ -48,12 +45,8 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
                 throw new InvalidOperationException("Ya existe una publicación con ese título para este usuario.");
             }
 
-            _logger.LogInformation("Creando publicación para usuario {UsuarioId} con título: {Titulo}", publicacion.UsuarioId, publicacion.Titulo);
-
-
             await _repositorioGenericoPublicacion.AgregarAsync(publicacion);
 
-            _logger.LogInformation("Publicación creada exitosamente.");
         }
 
         public async Task EditarPublicacionAsync(int id, Publicacion publicacion)
@@ -95,11 +88,7 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
                 throw new InvalidOperationException("Ya existe una publicacion con este titulo para este usuario");
             }
 
-            _logger.LogInformation("Editando la publicacion del usuario {UsuarioId} con el titulo {Titulo}", publicacion.UsuarioId, publicacion.Titulo);
-
              _repositorioGenericoPublicacion.ModificarAsync(publicacion);
-
-            _logger.LogInformation("Publicacion editada exitosamente");
         }
 
         public async Task EliminarPublicacionAsync(int id)
@@ -117,11 +106,7 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
                 throw new InvalidOperationException($"No existe una aplicacion con el id: {id}");
             }
 
-            _logger.LogInformation("Eliminando la publicacion con id {Id}", publicacion.Id);
-
             _repositorioGenericoPublicacion.EliminarAsync(publicacion);
-
-            _logger.LogInformation("Se elimino la publicacion con exito");
         }
 
         public async Task<ICollection<Publicacion>> ObtenerPublicacionesAsync()
