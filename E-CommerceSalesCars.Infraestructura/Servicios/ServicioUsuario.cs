@@ -2,7 +2,6 @@
 using E_CommerceSalesCars.Dominio.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -19,17 +18,15 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
         private readonly IRepositorioGenerico<Transaccion> _repositorioGenericoTransaccion;
         private readonly IRepositorioGenerico<Publicacion> _repositorioGenericoPublicacion;
         private readonly IRepositorioUsuario _repositorioUsuario;
-        private readonly PasswordHasher<Usuario> _passwordHasher;
-        private readonly ILogger _logger;
+        private readonly IPasswordHasher<Usuario> _passwordHasher;
 
-        public ServicioUsuario (IRepositorioGenerico<Usuario> repositorioGenericoUsuario, IRepositorioGenerico<Transaccion> repositorioGenericoTransaccion, IRepositorioGenerico<Publicacion> repositorioGenericoPublicacion, IRepositorioUsuario repositorioUsuario, PasswordHasher<Usuario> passwordHasher, ILogger logger)
+        public ServicioUsuario (IRepositorioGenerico<Usuario> repositorioGenericoUsuario, IRepositorioGenerico<Transaccion> repositorioGenericoTransaccion, IRepositorioGenerico<Publicacion> repositorioGenericoPublicacion, IRepositorioUsuario repositorioUsuario, IPasswordHasher<Usuario> passwordHasher)
         {
             _repositorioGenericoUsuario = repositorioGenericoUsuario;
             _repositorioGenericoTransaccion = repositorioGenericoTransaccion;
             _repositorioGenericoPublicacion = repositorioGenericoPublicacion;
             _repositorioUsuario = repositorioUsuario;
             _passwordHasher = passwordHasher;
-            _logger = logger;
         }
 
         public async Task RegistrarUsuarioAsync(string tipoUsuario, string nombre, string email, string telefono, string contrasena, string datoExtra1, string datoExtra2)
@@ -244,8 +241,6 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
 
             await _repositorioGenericoTransaccion.AgregarAsync(transaccion);
             await _repositorioGenericoPublicacion.ActualizarAsync(publicacion);
-
-            _logger.LogInformation($"Transacción iniciada para usuario {usuarioId} y publicación {publicacionId}.");
         }
 
     }

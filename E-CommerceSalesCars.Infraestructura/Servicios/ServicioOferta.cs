@@ -1,6 +1,5 @@
 ﻿using E_CommerceSalesCars.Dominio.Entidades;
 using E_CommerceSalesCars.Dominio.Interfaces;
-using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
@@ -16,15 +15,13 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
         private readonly IRepositorioGenerico<Oferta> _repositorioGenericoOferta;
         private readonly IRepositorioGenerico<Publicacion> _repositorioGenericoPublicacion;
         private readonly IRepositorioGenerico<Usuario> _repositorioGenericoUsuario;
-        private readonly ILogger _logger;
 
-        public ServicioOferta (IRepositorioOferta repositorioOferta, IRepositorioGenerico<Oferta> repositorioGenericoOferta, IRepositorioGenerico<Publicacion> repositorioGenericoPublicacion, IRepositorioGenerico<Usuario> repositorioGenericoUsuario, ILogger logger)
+        public ServicioOferta (IRepositorioOferta repositorioOferta, IRepositorioGenerico<Oferta> repositorioGenericoOferta, IRepositorioGenerico<Publicacion> repositorioGenericoPublicacion, IRepositorioGenerico<Usuario> repositorioGenericoUsuario)
         {
             _repositorioOferta = repositorioOferta;
             _repositorioGenericoOferta = repositorioGenericoOferta;
             _repositorioGenericoPublicacion = repositorioGenericoPublicacion;
             _repositorioGenericoUsuario = repositorioGenericoUsuario;
-            _logger = logger;
         }
 
         public async Task RealizarOfertaAsync(Oferta oferta)
