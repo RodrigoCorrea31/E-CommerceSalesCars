@@ -1,4 +1,4 @@
-﻿using E_CommerceSalesCars.Infraestructura.DTOs;
+﻿using E_CommerceSalesCars.Infraestructura.DTOs.UsuarioDTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,6 @@ namespace E_CommerceSalesCars.Infraestructura.AuthJWT
 {
     public interface IJwtServicio
     {
-        string GenerarTokenJwt(UsuarioDTO user);
+        string GenerarTokenJwt(UsuarioJwtDTO usuario);
     }
 }

@@ -1,4 +1,4 @@
-﻿using E_CommerceSalesCars.Infraestructura.DTOs;
+﻿using E_CommerceSalesCars.Infraestructura.DTOs.UsuarioDTO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -23,7 +23,7 @@ namespace E_CommerceSalesCars.Infraestructura.AuthJWT
                 throw new Exception("No se encontró la variable de entorno JWT_SECRET_KEY.");
         }
 
-        public string GenerarTokenJwt(UsuarioDTO usuario)
+        public string GenerarTokenJwt(UsuarioJwtDTO usuario)
         {
             var manejadorToken = new JwtSecurityTokenHandler();
             var clave = Encoding.ASCII.GetBytes(_claveSecreta);
@@ -48,4 +48,3 @@ namespace E_CommerceSalesCars.Infraestructura.AuthJWT
         }
     }
 }
-    
