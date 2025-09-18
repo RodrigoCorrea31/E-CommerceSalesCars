@@ -361,3 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# --- React frontend (ecommerce-autos) ---
+ecommerce-autos/node_modules/
+ecommerce-autos/build/
+ecommerce-autos/.env
