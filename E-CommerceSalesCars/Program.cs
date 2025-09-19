@@ -42,6 +42,16 @@ namespace E_CommerceSalesCars
             builder.Services.AddScoped<IServicioPublicacion, ServicioPublicacion>();
             builder.Services.AddScoped<IServicioOferta, ServicioOferta>();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy.WithOrigins("http://localhost:5173")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
 
             // === Configuración de JWT ===
             var claveSecreta = builder.Configuration["JWT_SECRET_KEY"]
@@ -89,6 +99,8 @@ namespace E_CommerceSalesCars
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowFrontend");
 
             app.UseAuthentication();
             app.UseAuthorization();
