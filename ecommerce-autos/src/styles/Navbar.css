@@ -1,0 +1,137 @@
+.navbar {
+  background: linear-gradient(135deg, #000000, #af0101);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 2rem;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  font-family: 'Times New Roman', Times, serif;
+  position: relative;
+    z-index: 1002; 
+}
+
+.navbar-logo img {
+  height: 50px;
+  margin: 5px;
+  width: auto;
+  display: block;
+}
+
+.navbar-links {
+  list-style: none;
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.navbar-links a {
+  color: white;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.navbar-links a:hover {
+  color: #e8c9c9;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navbar-btn {
+  background: white;
+  color: black;
+  font-family:Arial, Helvetica, sans-serif;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.navbar-btn:hover {
+  background: #af0101;
+  color: white;
+  transform: scale(1.05);
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1001;
+}
+
+.hamburger span {
+  display: block;
+  height: 3px;
+  width: 100%;
+  background: white;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translateY(8px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translateY(-8px);
+}
+
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex;
+  }
+
+  .navbar-links {
+    position: absolute;
+    top: 89%;
+    left: 0;
+    width: 90.4%;
+    flex-direction: column;
+    background: linear-gradient(135deg, #000000, #af0101);
+    gap: 1rem;
+    font-family: Arial, Helvetica, sans-serif;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  .navbar-links.open {
+    max-height: 300px;
+  }
+
+  .navbar-user {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0.5rem 1rem;
+  }
+
+  .navbar-logo img {
+    height: 40px;
+  }
+
+  .navbar-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+}

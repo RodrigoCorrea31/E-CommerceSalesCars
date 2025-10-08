@@ -7,15 +7,35 @@ using System.Threading.Tasks;
 
 namespace E_CommerceSalesCars.Infraestructura.DTOs.PublicacionDTO
 {
-    public class PublicacionDetalleDto
+    namespace E_CommerceSalesCars.Infraestructura.DTOs.PublicacionDTO
     {
-        public int Id { get; set; }
-        public string Titulo { get; set; }
-        public decimal Precio { get; set; }
-        public bool EsUsado { get; set; }
-        public EstadoPublicacion Estado { get; set; }
-        public string Marca { get; set; }
-        public string Modelo { get; set; }
-        public int Anio { get; set; }
+        public class VehiculoDto
+        {
+            public string Marca { get; set; }
+            public string Modelo { get; set; }
+            public int Anio { get; set; }
+            public int Kilometraje { get; set; }
+            public Combustible Combustible { get; set; }
+            public string Color { get; set; }
+
+            public List<ImagenDto> Imagenes { get; set; } = new List<ImagenDto>();
+
+        }
+
+        public class ImagenDto
+        {
+            public int Id { get; set; }
+            public string Url { get; set; }  
+        }
+
+        public class PublicacionDetalleDto
+        {
+            public int Id { get; set; }
+            public string Titulo { get; set; }
+            public decimal Precio { get; set; }
+            public bool EsUsado { get; set; }
+            public EstadoPublicacion Estado { get; set; }
+            public VehiculoDto Vehiculo { get; set; }
+        }
     }
 }

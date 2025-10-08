@@ -2,10 +2,13 @@
 using E_CommerceSalesCars.Dominio.Entidades;
 using E_CommerceSalesCars.Dominio.Interfaces;
 using E_CommerceSalesCars.Infraestructura.DTOs.PublicacionDTO;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using E_CommerceSalesCars.Infraestructura.DTOs.PublicacionDTO.E_CommerceSalesCars.Infraestructura.DTOs.PublicacionDTO;
 
 namespace E_CommerceSalesCars.Presentacion.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/publicacion")]
     [ApiController]
     public class PublicacionController : ControllerBase
     {
@@ -29,13 +32,25 @@ namespace E_CommerceSalesCars.Presentacion.Controllers
                 Precio = p.Precio,
                 EsUsado = p.EsUsado,
                 Estado = p.Estado,
-                Marca = p.Vehiculo?.Marca,
-                Modelo = p.Vehiculo?.Modelo,
-                Anio = p.Vehiculo?.Anio ?? 0
+                Vehiculo = new VehiculoDto
+                {
+                    Marca = p.Vehiculo?.Marca,
+                    Modelo = p.Vehiculo?.Modelo,
+                    Anio = p.Vehiculo?.Anio ?? 0,
+                    Kilometraje = p.Vehiculo?.Kilometraje ?? 0,
+                    Combustible = p.Vehiculo?.Combustible ?? 0,
+                    Color = p.Vehiculo?.Color,
+                    Imagenes = p.Vehiculo.Imagenes?.Select(img => new ImagenDto
+                    {
+                        Id = img.Id,
+                        Url = img.Url
+                    }).ToList()
+                }
             });
 
             return Ok(dtoList);
         }
+
 
         // GET: api/publicacion/{id}
         [HttpGet("{id}")]
@@ -49,40 +64,134 @@ namespace E_CommerceSalesCars.Presentacion.Controllers
                 return NotFound();
             }
 
-            var dto = new PublicacionDetalleDto
+            var dto = publicaciones.Select(p => new PublicacionDetalleDto
             {
-                Id = pub.Id,
-                Titulo = pub.Titulo,
-                Precio = pub.Precio,
-                EsUsado = pub.EsUsado,
-                Estado = pub.Estado,
-                Marca = pub.Vehiculo?.Marca,
-                Modelo = pub.Vehiculo?.Modelo,
-                Anio = pub.Vehiculo?.Anio ?? 0
-            };
+                Id = p.Id,
+                Titulo = p.Titulo,
+                Precio = p.Precio,
+                EsUsado = p.EsUsado,
+                Estado = p.Estado,
+                Vehiculo = new VehiculoDto
+                {
+                    Marca = p.Vehiculo?.Marca,
+                    Modelo = p.Vehiculo?.Modelo,
+                    Anio = p.Vehiculo?.Anio ?? 0,
+                    Kilometraje = p.Vehiculo?.Kilometraje ?? 0,
+                    Combustible = p.Vehiculo?.Combustible ?? 0,
+                    Color = p.Vehiculo?.Color,
+                }
+            });
+
+
 
             return Ok(dto);
         }
 
-        // POST: api/publicacion
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult> Crear([FromBody] PublicacionCrearDto dto)
         {
-            var pub = new Publicacion
+            try
             {
-                Titulo = dto.Titulo,
-                Precio = dto.Precio,
-                EsUsado = dto.EsUsado,
-                Estado = EstadoPublicacion.Activo,
-                Fecha = DateTime.UtcNow,
-                VehiculoId = dto.VehiculoId,
-                UsuarioId = dto.UsuarioId
-            };
+                var userIdClaim = User.FindFirst("id")?.Value;
+                if (userIdClaim == null) return Unauthorized("Token inválido");
 
-            await _servicio.CrearPublicacionAsync(pub);
+                int usuarioId = int.Parse(userIdClaim);
 
-            return CreatedAtAction(nameof(GetById), new { id = pub.Id }, dto);
+                var vehiculo = new Vehiculo
+                {
+                    Marca = dto.Vehiculo.Marca,
+                    Modelo = dto.Vehiculo.Modelo,
+                    Anio = dto.Vehiculo.Anio,
+                    Kilometraje = dto.Vehiculo.Kilometraje,
+                    Combustible = dto.Vehiculo.Combustible,
+                    Color = dto.Vehiculo.Color,
+                    Imagenes = dto.Vehiculo.Imagenes
+                        .Where(url => !string.IsNullOrWhiteSpace(url))
+                        .Select((url, idx) => new ImagenVehiculo
+                        {
+                            Url = url,
+                            Orden = idx,
+                            EsPrincipal = idx == 0
+                        }).ToList()
+                };
+
+                foreach (var img in vehiculo.Imagenes)
+                {
+                    img.Vehiculo = vehiculo;
+                }
+
+                var pub = new Publicacion
+                {
+                    Titulo = dto.Titulo,
+                    Precio = dto.Precio,
+                    EsUsado = dto.EsUsado,
+                    Estado = EstadoPublicacion.Activo,
+                    Fecha = DateTime.UtcNow,
+                    UsuarioId = usuarioId,
+                    Vehiculo = vehiculo
+                };
+
+                await _servicio.CrearPublicacionAsync(pub);
+
+                return CreatedAtAction(nameof(GetById), new { id = pub.Id }, new
+                {
+                    pub.Id,
+                    pub.Titulo,
+                    pub.Precio,
+                    pub.EsUsado,
+                    pub.Estado,
+                    pub.Fecha,
+                    pub.UsuarioId,
+                    Vehiculo = new
+                    {
+                        pub.Vehiculo.Marca,
+                        pub.Vehiculo.Modelo,
+                        pub.Vehiculo.Anio,
+                        pub.Vehiculo.Kilometraje,
+                        pub.Vehiculo.Combustible,
+                        pub.Vehiculo.Color,
+                        Imagenes = pub.Vehiculo.Imagenes.Select(i => new {
+                            i.Url,
+                            i.Orden,
+                            i.EsPrincipal
+                        })
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al crear publicación: {ex.Message}");
+            }
         }
+
+
+        [HttpPost("upload-imagen")]
+        [Authorize]
+        public async Task<ActionResult<string>> UploadImagen(IFormFile file)
+        {
+            if (file == null || file.Length == 0) return BadRequest("Archivo inválido");
+
+            var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "imagenes");
+
+            if (!Directory.Exists(uploadsPath))
+            {
+                Directory.CreateDirectory(uploadsPath);
+            }
+
+            var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+            var filePath = Path.Combine(uploadsPath, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            var url = $"{Request.Scheme}://{Request.Host}/imagenes/{fileName}";
+            return Ok(url);
+        }
+
+
 
         // PUT: api/publicacion/{id}
         [HttpPut("{id}")]
@@ -137,10 +246,17 @@ namespace E_CommerceSalesCars.Presentacion.Controllers
                 Precio = p.Precio,
                 EsUsado = p.EsUsado,
                 Estado = p.Estado,
-                Marca = p.Vehiculo?.Marca,
-                Modelo = p.Vehiculo?.Modelo,
-                Anio = p.Vehiculo?.Anio ?? 0
+                Vehiculo = new VehiculoDto
+                {
+                    Marca = p.Vehiculo?.Marca,
+                    Modelo = p.Vehiculo?.Modelo,
+                    Anio = p.Vehiculo?.Anio ?? 0,
+                    Kilometraje = p.Vehiculo?.Kilometraje ?? 0,
+                    Combustible = p.Vehiculo?.Combustible ?? 0,
+                    Color = p.Vehiculo?.Color,
+                }
             });
+
 
             return Ok(dtoList);
         }

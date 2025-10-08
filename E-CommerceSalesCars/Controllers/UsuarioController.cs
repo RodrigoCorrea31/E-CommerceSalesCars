@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace E_CommerceSalesCars.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/usuarios")]
     [ApiController]
     public class UsuarioController : ControllerBase
     {
@@ -33,37 +33,48 @@ namespace E_CommerceSalesCars.Controllers
             return Ok(new { mensaje = "Usuario registrado con éxito" });
         }
 
-        // POST: api/usuarios/login
         [HttpPost("login")]
-        public async Task<ActionResult<UsuarioRespuestaDto>> Login([FromBody] LoginUsuarioDto dto)
+        public async Task<IActionResult> Login([FromBody] LoginUsuarioDto dto)
         {
-            var usuario = await _servicioUsuario.LoginAsync(dto.Email, dto.Contrasena);
-
-            var usuarioJwt = new UsuarioJwtDTO
+            try
             {
-                Id = usuario.Id,
-                NombreUsuario = usuario.Name,
-                Correo = usuario.Email
-            };
+                var usuario = await _servicioUsuario.LoginAsync(dto.Email, dto.Contrasena);
 
-            var token = _jwtServicio.GenerarTokenJwt(usuarioJwt);
-
-            return Ok(new
-            {
-                token,
-                usuario = new UsuarioRespuestaDto
+                var usuarioJwt = new UsuarioJwtDTO
                 {
                     Id = usuario.Id,
-                    Nombre = usuario.Name,
-                    Email = usuario.Email,
-                    Telefono = usuario.Telefono,
-                    TipoUsuario = usuario is Persona ? "Persona" : "Empresa"
-                }
-            });
+                    NombreUsuario = usuario.Name,
+                    Correo = usuario.Email
+                };
+
+                var token = _jwtServicio.GenerarTokenJwt(usuarioJwt);
+
+                return Ok(new
+                {
+                    token,
+                    usuario = new UsuarioRespuestaDto
+                    {
+                        Id = usuario.Id,
+                        Nombre = usuario.Name,
+                        Email = usuario.Email,
+                        Telefono = usuario.Telefono,
+                        TipoUsuario = usuario is Persona ? "Persona" : "Empresa"
+                    }
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Unauthorized(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error inesperado", detalle = ex.Message });
+            }
         }
 
-            // GET: api/usuarios/{id}/ofertas
-            [HttpGet("{id}/ofertas")]
+
+        // GET: api/usuarios/{id}/ofertas
+        [HttpGet("{id}/ofertas")]
         public async Task<ActionResult<IEnumerable<OfertaDto>>> ObtenerOfertas(int id)
         {
             var ofertas = await _servicioUsuario.ObtenerOfertasRealizadasAsync(id);

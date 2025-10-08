@@ -53,6 +53,7 @@ namespace E_CommerceSalesCars
             });
 
 
+
             // === Configuración de JWT ===
             var claveSecreta = builder.Configuration["JWT_SECRET_KEY"]
                                ?? Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
@@ -98,7 +99,8 @@ namespace E_CommerceSalesCars
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
             app.UseCors("AllowFrontend");
 

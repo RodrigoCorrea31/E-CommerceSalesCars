@@ -1,0 +1,42 @@
+.login-requerido-container {
+  background: linear-gradient(135deg, #000000, #ff0000);
+  min-height: 89vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.login-requerido-container h2 {
+  color: #ffffff;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.login-requerido-container p {
+  color: #f1f1f1;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  max-width: 400px;
+}
+
+.btn-ir-login {
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  padding: 0.9rem 2rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.btn-ir-login:hover {
+  background-color: #af0101;
+  transform: scale(1.05);
+}

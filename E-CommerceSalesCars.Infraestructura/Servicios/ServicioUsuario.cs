@@ -32,41 +32,26 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
         public async Task RegistrarUsuarioAsync(string tipoUsuario, string nombre, string email, string telefono, string contrasena, string datoExtra1, string datoExtra2)
         {
             if (string.IsNullOrWhiteSpace(nombre))
-            {
                 throw new ArgumentException("El nombre es requerido.");
-            }
-
             if (string.IsNullOrWhiteSpace(email))
-            {
                 throw new ArgumentException("El email es requerido.");
-            }
-
             if (string.IsNullOrWhiteSpace(contrasena))
-            {
                 throw new ArgumentException("La contraseña es requerida.");
-            }
 
             bool existe = await _repositorioUsuario.ExisteUsuarioConEmailAsync(email);
             if (existe)
-            {
                 throw new InvalidOperationException("Ya existe un usuario registrado con ese email.");
-            }
 
             Usuario nuevoUsuario;
 
             if (tipoUsuario.ToLower() == "persona")
             {
                 if (string.IsNullOrWhiteSpace(datoExtra1))
-                {
                     throw new ArgumentException("La cédula es requerida.");
-                }
-
                 if (string.IsNullOrWhiteSpace(datoExtra2))
-                {
                     throw new ArgumentException("La dirección es requerida.");
-                }
 
-                var persona = new Persona
+                nuevoUsuario = new Persona
                 {
                     Name = nombre,
                     Email = email,
@@ -74,22 +59,15 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
                     CI = datoExtra1,
                     Direccion = datoExtra2
                 };
-
-                persona.ContrasenaHash = _passwordHasher.HashPassword(persona, contrasena);
-                nuevoUsuario = persona;
             }
             else if (tipoUsuario.ToLower() == "empresa")
             {
                 if (string.IsNullOrWhiteSpace(datoExtra1))
-                {
                     throw new ArgumentException("El RUT es requerido.");
-                }
                 if (string.IsNullOrWhiteSpace(datoExtra2))
-                {
                     throw new ArgumentException("La razón social es requerida.");
-                }
 
-                var empresa = new Empresa
+                nuevoUsuario = new Empresa
                 {
                     Name = nombre,
                     Email = email,
@@ -97,17 +75,19 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
                     RUT = datoExtra1,
                     RazonSocial = datoExtra2
                 };
-
-                empresa.ContrasenaHash = _passwordHasher.HashPassword(empresa, contrasena);
-                nuevoUsuario = empresa;
             }
             else
             {
                 throw new ArgumentException("Tipo de usuario no válido. Debe ser 'persona' o 'empresa'.");
             }
 
+            // 🔑 IMPORTANTE: hashear antes de guardar
+            var hasher = new PasswordHasher<Usuario>();
+            nuevoUsuario.ContrasenaHash = hasher.HashPassword(nuevoUsuario, contrasena);
+
             await _repositorioGenericoUsuario.AgregarAsync(nuevoUsuario);
         }
+
 
         public async Task<Usuario> LoginAsync(string email, string contrasena)
         {

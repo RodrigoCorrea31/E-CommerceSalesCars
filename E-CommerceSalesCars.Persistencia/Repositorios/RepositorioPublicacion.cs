@@ -19,12 +19,15 @@ namespace E_CommerceSalesCars.Persistencia.Repositorios
 
         public RepositorioPublicacion(MyDbContext context) 
         {
-            context = _context;
+            _context = context;
             _dbset = _context.Set<Publicacion>();
         }
         public async Task<ICollection<Publicacion>> ObtenerPublicacionesConVehiculoAsync()
         {
-            return await _dbset.Include(p => p.Vehiculo).ToListAsync();
+            return await _dbset
+                .Include(p => p.Vehiculo)
+                    .ThenInclude(v => v.Imagenes)
+                .ToListAsync();
         }
 
         public async Task<ICollection<Publicacion>> FiltrarPublicacionesAsync(Expression<Func<Publicacion, bool>> filtro)

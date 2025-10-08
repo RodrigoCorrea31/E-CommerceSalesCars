@@ -111,7 +111,7 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
 
         public async Task<ICollection<Publicacion>> ObtenerPublicacionesAsync()
         {
-            var publicaciones = await _repositorioGenericoPublicacion.ListarTodosAsync();
+            var publicaciones = await _repositorioPublicacion.ObtenerPublicacionesConVehiculoAsync();
             return publicaciones ?? new List<Publicacion>();
         }
 

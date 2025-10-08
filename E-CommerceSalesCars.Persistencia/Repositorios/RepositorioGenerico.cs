@@ -34,6 +34,7 @@ namespace E_CommerceSalesCars.Persistencia.Repositorios
         public async Task AgregarAsync(E entidad)
         {
             await _dbset.AddAsync(entidad);
+            await _context.SaveChangesAsync();
         }
 
         public void EliminarAsync(E entidad)

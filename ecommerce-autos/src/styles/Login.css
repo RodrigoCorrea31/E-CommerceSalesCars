@@ -1,0 +1,135 @@
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.login-container {
+  background: linear-gradient(135deg, #000000, #ff0000);
+  min-height: 89vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.login-form {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 2rem 2.5rem;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+}
+
+.login-form:hover {
+  transform: translateY(-2px);
+}
+
+.login-title {
+  text-align: center;
+  font-family: 'Times New Roman', Times, serif;
+  color: #000000;
+  margin-bottom: 0.5rem;
+  font-size: 1.9rem;
+  font-weight: bold;
+}
+
+.login-subtitle {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.login-field label {
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.login-input {
+  padding: 0.65rem;
+  border: 1.8px solid #bbb;
+  border-radius: 10px;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.7);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: #af0101;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+}
+
+.login-button-container {
+  margin-top: 1.5rem;
+}
+
+.login-button {
+  width: 100%;
+  padding: 0.85rem;
+  background-color: #000000;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.05rem;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.login-button:hover {
+  background-color: #af0101;
+  transform: scale(1.02);
+}
+
+.login-button:disabled {
+  background-color: #9e9e9e;
+  cursor: not-allowed;
+}
+
+.login-error {
+  color: #af0101;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 1.2rem;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.login-link {
+  color: #000000;
+  font-weight: bold;
+  position: relative;
+  cursor: pointer;
+}
+
+.login-link::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  left: 0;
+  bottom: -2px;
+  background: #000000;
+  transition: width 0.3s ease;
+}
+
+.login-link:hover::after {
+  width: 100%;
+}

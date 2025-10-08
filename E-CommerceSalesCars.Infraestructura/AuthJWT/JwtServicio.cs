@@ -34,7 +34,7 @@ public class JwtServicio : IJwtServicio
     public string GenerarTokenJwt(UsuarioJwtDTO usuario)
     {
         var manejadorToken = new JwtSecurityTokenHandler();
-        var clave = Encoding.ASCII.GetBytes(_claveSecreta);
+        var clave = Encoding.UTF8.GetBytes(_claveSecreta);
 
         var descriptorToken = new SecurityTokenDescriptor
         {
@@ -52,6 +52,12 @@ public class JwtServicio : IJwtServicio
                 SecurityAlgorithms.HmacSha256Signature
             )
         };
+
+        Console.WriteLine($"Clave secreta (len): {_claveSecreta?.Length}");
+        Console.WriteLine($"Issuer: {_issuer}");
+        Console.WriteLine($"Audience: {_audience}");
+        Console.WriteLine($"Usuario Id: {usuario.Id}, Nombre: {usuario.NombreUsuario}, Email: {usuario.Correo}");
+
 
         var token = manejadorToken.CreateToken(descriptorToken);
         return manejadorToken.WriteToken(token);

@@ -1,0 +1,31 @@
+.content-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.publicacion-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (min-width: 769px) {
+  .sidebar {
+    position: sticky;
+    height: calc(100vh - 90px);
+  }
+}
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    margin-top: 20px;
+    padding: 1rem;
+  }
+
+  .publicacion-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -17,28 +17,31 @@ namespace E_CommerceSalesCars.Dominio.Entidades
     {
         [Key]
         public int Id { get; set; }
-        [Required]
-        [StringLength(150, ErrorMessage = "El titulo no debe contener mas de 150 caracteres.")]
+
+        [Required, StringLength(150)]
         public string Titulo { get; set; }
-        [Required]
-        [Range(0, double.MaxValue, ErrorMessage = "El precio no debe ser menor a 0.")]
+
+        [Required, Range(0, double.MaxValue)]
         public decimal Precio { get; set; }
+
         [Required]
         public DateTime Fecha { get; set; }
+
         [Required]
         public bool EsUsado { get; set; }
+
         [Required]
         public EstadoPublicacion Estado { get; set; }
-
-        public int VehiculoId { get; set; }
-        [ForeignKey("VehiculoId")]
-        public Vehiculo Vehiculo { get; set; }
 
         public int UsuarioId { get; set; }
         [ForeignKey("UsuarioId")]
         public Usuario Usuario { get; set; }
 
-        public ICollection<Oferta> Ofertas { get; set; } = new List<Oferta>();
+        public int VehiculoId { get; set; }
+        [ForeignKey("VehiculoId")]
+        public Vehiculo Vehiculo { get; set; }
 
+        public ICollection<Oferta> Ofertas { get; set; } = new List<Oferta>();
     }
+
 }
