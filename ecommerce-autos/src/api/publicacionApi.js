@@ -21,6 +21,21 @@ export const uploadImagen = (file, token) => {
   });
 };
 
+export const getMisPublicaciones = (token) =>
+  api.get("/publicacion/mis-publicaciones", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  export const getOfertasPorPublicacion = (id, token) =>
+  api.get(`/publicacion/${id}/ofertas`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+
 export const editarPublicacion = (id, data) => api.put(`/publicacion/${id}`, data);
 export const eliminarPublicacion = (id) => api.delete(`/publicacion/${id}`);
 export const filtrarPublicaciones = (params) => api.get("/publicacion", { params });

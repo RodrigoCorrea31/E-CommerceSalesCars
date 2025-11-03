@@ -33,20 +33,31 @@ namespace E_CommerceSalesCars.Persistencia.Repositorios
 
         public async Task<ICollection<Oferta>> ObtenerOfertasRealizadasAsync(int usuarioId)
         {
-            var usuario = await _dbset.Include(u => u.OfertasRealizadadas).FirstOrDefaultAsync(u => u.Id == usuarioId);
+            var usuario = await _dbset
+                .Include(u => u.OfertasRealizadadas)
+                    .ThenInclude(o => o.Publicacion)
+                .FirstOrDefaultAsync(u => u.Id == usuarioId);
+
             return usuario?.OfertasRealizadadas ?? new List<Oferta>();
         }
 
         public async Task<ICollection<Transaccion>> ObtenerComprasAsync(int usuarioId)
         {
-            var usuario = await _dbset.Include(u => u.Compras).FirstOrDefaultAsync(u => u.Id == usuarioId);
-            return usuario?.Compras ?? new List<Transaccion>();
+            return await _context.Transacciones
+                .Include(t => t.Vendedor)
+                .Include(t => t.Publicacion)
+                .Where(t => t.CompradorId == usuarioId)
+                .ToListAsync();
         }
 
         public async Task<ICollection<Transaccion>> ObtenerVentasAsync(int usuarioId)
         {
-            var usuario = await _dbset.Include(u => u.Ventas).FirstOrDefaultAsync(u => u.Id == usuarioId);
-            return usuario?.Ventas ?? new List<Transaccion>();
+            return await _context.Transacciones
+                .Include(t => t.CompradorTransaccion)
+                .Include(t => t.Publicacion)
+                .Where(t => t.VendedorId == usuarioId)
+                .ToListAsync();
         }
+
     }
 }

@@ -20,17 +20,14 @@ namespace E_CommerceSalesCars.Controllers
             _repositorioTransaccion = repositorioTransaccion;
         }
 
-        // POST /api/transaccion/{id}/finalizar
-        [HttpPost("{id}/finalizar")]
-        public async Task<ActionResult<TransaccionRespuestaDTO>> FinalizarTransaccion(int id)
+        [HttpPost("{ofertaId}/finalizar")]
+        public async Task<ActionResult<TransaccionRespuestaDTO>> FinalizarTransaccion(int ofertaId)
         {
             try
             {
-                await _servicioTransaccion.FinalizarTransaccionAsync(id);
+                var transaccion = await _servicioTransaccion.FinalizarTransaccionAsync(ofertaId);
 
-                var transaccion = await _repositorioTransaccion.ObtenerPorIdAsync(id);
-                if (transaccion == null)
-                    return NotFound("No se encontró la transacción.");
+                transaccion.MetodoDePago ??= "No especificado";
 
                 var dto = new TransaccionRespuestaDTO
                 {
@@ -38,9 +35,9 @@ namespace E_CommerceSalesCars.Controllers
                     Fecha = transaccion.Fecha,
                     FechaFinalizacion = transaccion.FechaFinalizacion,
                     PrecioVenta = transaccion.PrecioVenta,
-                    Observacion = transaccion.Observacion,
                     Estado = transaccion.Estado.ToString(),
                     MetodoDePago = transaccion.MetodoDePago,
+                    Observacion = transaccion.Observacion,
                     CompradorId = transaccion.CompradorId,
                     VendedorId = transaccion.VendedorId,
                     PublicacionId = transaccion.PublicacionId

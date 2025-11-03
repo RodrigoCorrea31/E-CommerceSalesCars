@@ -1,0 +1,202 @@
+.OfertasContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #000000, #af0101);
+  color: #000;
+  font-family: "Arial", sans-serif;
+}
+
+.ofertas-body {
+  max-width: 1000px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  flex: 1;
+}
+
+.ofertas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.ofertas-header h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #000;
+  text-align: center;
+  margin-bottom: 0.8rem;
+}
+
+.btn-volver {
+  background: linear-gradient(135deg, #000000, #af0101);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.25s ease, transform 0.1s ease;
+}
+
+.btn-volver:hover {
+  background: linear-gradient(135deg, #2b0000, #d40000);
+  transform: scale(1.05);
+}
+
+.tabla-ofertas {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.tabla-ofertas th {
+  background: linear-gradient(135deg, #000000, #af0101);
+  color: #fff;
+  font-weight: bold;
+  padding: 1rem;
+  text-transform: uppercase;
+  border: none;
+}
+
+.tabla-ofertas td {
+  background-color: #f8f8f8;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.tabla-ofertas tr {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tabla-ofertas tr:hover {
+  transform: scale(1.01);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.estado {
+  font-weight: bold;
+  text-transform: capitalize;
+  border-radius: 6px;
+  padding: 0.4rem 0.7rem;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-width: 80px;
+}
+
+.estado.pendiente {
+  color: #f59e0b;
+  background: #fff8e1;
+}
+
+.estado.aceptada {
+  color: #16a34a;
+  background: #e8f5e9;
+}
+
+.estado.rechazada {
+  color: #dc2626;
+  background: #fee2e2;
+}
+
+.acciones-oferta {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.btn-aceptar {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-aceptar:hover {
+  background-color: #218838;
+}
+
+.btn-rechazar {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-rechazar:hover {
+  background-color: #c82333;
+}
+
+
+.ofertas-loading,
+.ofertas-error {
+  text-align: center;
+  margin: 1rem 0;
+  color: #000;
+}
+
+@media (max-width: 768px) {
+  .ofertas-body {
+    padding: 1.2rem;
+  }
+
+  .ofertas-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .ofertas-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .btn-volver {
+    margin-top: 0.6rem;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.9rem;
+  }
+
+  .tabla-ofertas {
+    font-size: 0.9rem;
+  }
+
+  .tabla-ofertas th,
+  .tabla-ofertas td {
+    padding: 0.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabla-ofertas {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .ofertas-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .btn-volver {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.7rem;
+  }
+}

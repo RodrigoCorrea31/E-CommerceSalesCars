@@ -36,6 +36,19 @@ namespace E_CommerceSalesCars.Infraestructura.DTOs.PublicacionDTO
             public bool EsUsado { get; set; }
             public EstadoPublicacion Estado { get; set; }
             public VehiculoDto Vehiculo { get; set; }
+
+            public UsuarioDto Vendedor { get; set; }
+            public DateTime Fecha { get; set; }
         }
+
+        public class UsuarioDto
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+            public string Email { get; set; }
+            public string Telefono { get; set; }
+            public string TipoUsuario { get; set; }
+        }
+
     }
 }

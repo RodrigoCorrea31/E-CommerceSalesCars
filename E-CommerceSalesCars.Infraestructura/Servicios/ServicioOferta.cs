@@ -24,30 +24,44 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
             _repositorioGenericoUsuario = repositorioGenericoUsuario;
         }
 
-        public async Task RealizarOfertaAsync(Oferta oferta)
+        public async Task<Oferta> RealizarOfertaAsync(decimal monto, int compradorId, int publicacionId)
         {
-            if (oferta == null)
-            {
-                throw new ArgumentNullException (nameof(oferta));
-            }
+            var comprador = await _repositorioGenericoUsuario.ObtenerPorIdAsync(compradorId)
+                ?? throw new InvalidOperationException("El usuario no existe.");
 
-            var usuario = await _repositorioGenericoUsuario.ObtenerPorIdAsync(oferta.CompradorId);
-            if(usuario == null)
-            {
-                throw new InvalidOperationException("El usuario que intenta hacer la oferta no existe.");
-            }
+            var publicacion = await _repositorioGenericoPublicacion.ObtenerPorIdAsync(publicacionId)
+                ?? throw new InvalidOperationException("La publicación no existe.");
 
-            var publicacion = await _repositorioGenericoPublicacion.ObtenerPorIdAsync(oferta.PublicacionId);
-            if (publicacion == null)
-            {
-                throw new InvalidOperationException("La publicacion ya no existe");
-            }
+            if (publicacion.UsuarioId == compradorId)
+                throw new InvalidOperationException("No puedes ofertar en tu propia publicación.");
 
-            usuario.OfertasRealizadadas.Add(oferta);
-            publicacion.Ofertas.Add(oferta);
+            if (publicacion.Estado != EstadoPublicacion.Activo)
+                throw new InvalidOperationException("La publicación no está activa para recibir ofertas.");
+
+            bool yaOferto = publicacion.Ofertas.Any(o => o.CompradorId == compradorId);
+            if (yaOferto)
+                throw new InvalidOperationException("Ya realizaste una oferta en esta publicación.");
+
+            var oferta = new Oferta
+            {
+                Monto = monto,
+                Fecha = DateTime.UtcNow,
+                Estado = EstadoOferta.Pendiente,
+                CompradorId = compradorId,
+                PublicacionId = publicacionId
+            };
 
             await _repositorioGenericoOferta.AgregarAsync(oferta);
-            
+            return oferta;
+        }
+
+        public async Task<Oferta> ObtenerPorIdAsync(int id)
+        {
+            var oferta = await _repositorioGenericoOferta.ObtenerPorIdAsync(id);
+            if (oferta == null)
+                throw new KeyNotFoundException($"No se encontró una oferta con el ID {id}");
+
+            return oferta;
         }
 
         public async Task AceptarOfertaAsync(int ofertaId)

@@ -1,21 +1,33 @@
-import { useEffect, useState } from "react";
-import { obtenerPublicaciones } from "../services/publicacionService";
+import { useState, useEffect } from "react";
+import { obtenerPublicaciones, filtrarPublicaciones } from "../services/publicacionService";
 
 export const usePublicaciones = () => {
   const [publicaciones, setPublicaciones] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const cargarPublicaciones = async () => {
+    setLoading(true);
+    try {
+      const data = await obtenerPublicaciones();
+      setPublicaciones(data || []);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const aplicarFiltros = async (filtros) => {
+    setLoading(true);
+    try {
+      const data = await filtrarPublicaciones(filtros);
+      setPublicaciones(data || []);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await obtenerPublicaciones();
-        setPublicaciones(data);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    cargarPublicaciones();
   }, []);
 
-  return { publicaciones, loading };
+  return { publicaciones, loading, aplicarFiltros };
 };

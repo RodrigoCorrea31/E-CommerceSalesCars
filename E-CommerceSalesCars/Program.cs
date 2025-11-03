@@ -34,6 +34,8 @@ namespace E_CommerceSalesCars
             builder.Services.AddScoped<IRepositorioPublicacion, RepositorioPublicacion>();
             builder.Services.AddScoped<IRepositorioOferta, RepositorioOferta>();
 
+            builder.Services.AddHttpContextAccessor();
+
             // === Servicios de aplicación ===
             builder.Services.AddScoped<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
             builder.Services.AddScoped<IJwtServicio, JwtServicio>();

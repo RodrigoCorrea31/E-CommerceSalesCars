@@ -36,70 +36,98 @@ namespace E_CommerceSalesCars.Tests
         [Fact]
         public async Task RealizarOfertaAsync_CuandoDatosValidos_AgregaOferta()
         {
-            var oferta = new Oferta { CompradorId = 1, PublicacionId = 2 };
-            var usuario = new Persona { Id = 1, OfertasRealizadadas = new List<Oferta>() };
-            var publicacion = new Publicacion { Id = 2, Ofertas = new List<Oferta>() };
+            // Arrange
+            decimal monto = 5000m;
+            int compradorId = 1;
+            int publicacionId = 2;
 
-            _repoGenericoUsuarioMock.Setup(r => r.ObtenerPorIdAsync(1)).ReturnsAsync(usuario);
-            _repoGenericoPublicacionMock.Setup(r => r.ObtenerPorIdAsync(2)).ReturnsAsync(publicacion);
+            var usuario = new Persona { Id = compradorId, OfertasRealizadadas = new List<Oferta>() };
+            var publicacion = new Publicacion { Id = publicacionId, Ofertas = new List<Oferta>(), UsuarioId = 99, Estado = EstadoPublicacion.Activo };
 
-            await _servicio.RealizarOfertaAsync(oferta);
+            _repoGenericoUsuarioMock.Setup(r => r.ObtenerPorIdAsync(compradorId)).ReturnsAsync(usuario);
+            _repoGenericoPublicacionMock.Setup(r => r.ObtenerPorIdAsync(publicacionId)).ReturnsAsync(publicacion);
 
-            usuario.OfertasRealizadadas.Should().Contain(oferta);
-            publicacion.Ofertas.Should().Contain(oferta);
-            _repoGenericoOfertaMock.Verify(r => r.AgregarAsync(oferta), Times.Once);
+            // Act
+            var resultado = await _servicio.RealizarOfertaAsync(monto, compradorId, publicacionId);
+
+            // Assert
+            resultado.Monto.Should().Be(monto);
+            resultado.CompradorId.Should().Be(compradorId);
+            resultado.PublicacionId.Should().Be(publicacionId);
+
+            _repoGenericoOfertaMock.Verify(r => r.AgregarAsync(It.IsAny<Oferta>()), Times.Once);
         }
 
         [Fact]
         public async Task RealizarOfertaAsync_CuandoUsuarioNoExiste_LanzaExcepcion()
         {
-            var oferta = new Oferta { CompradorId = 99, PublicacionId = 2 };
-            _repoGenericoUsuarioMock.Setup(r => r.ObtenerPorIdAsync(99))
+            // Arrange
+            decimal monto = 5000m;
+            int compradorId = 99;
+            int publicacionId = 2;
+
+            _repoGenericoUsuarioMock.Setup(r => r.ObtenerPorIdAsync(compradorId))
                                     .ReturnsAsync((Usuario)null);
 
-            Func<Task> act = async () => await _servicio.RealizarOfertaAsync(oferta);
+            // Act
+            Func<Task> act = async () => await _servicio.RealizarOfertaAsync(monto, compradorId, publicacionId);
 
+            // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
-                     .WithMessage("El usuario que intenta hacer la oferta no existe.");
+                     .WithMessage("El usuario no existe.");
         }
 
         [Fact]
         public async Task RealizarOfertaAsync_CuandoPublicacionNoExiste_LanzaExcepcion()
         {
-            var oferta = new Oferta { CompradorId = 1, PublicacionId = 99 };
-            var usuario = new Persona { Id = 1, OfertasRealizadadas = new List<Oferta>() };
+            // Arrange
+            decimal monto = 5000m;
+            int compradorId = 1;
+            int publicacionId = 99;
 
-            _repoGenericoUsuarioMock.Setup(r => r.ObtenerPorIdAsync(1)).ReturnsAsync(usuario);
-            _repoGenericoPublicacionMock.Setup(r => r.ObtenerPorIdAsync(99))
+            var usuario = new Persona { Id = compradorId, OfertasRealizadadas = new List<Oferta>() };
+
+            _repoGenericoUsuarioMock.Setup(r => r.ObtenerPorIdAsync(compradorId)).ReturnsAsync(usuario);
+            _repoGenericoPublicacionMock.Setup(r => r.ObtenerPorIdAsync(publicacionId))
                                         .ReturnsAsync((Publicacion)null);
 
-            Func<Task> act = async () => await _servicio.RealizarOfertaAsync(oferta);
+            // Act
+            Func<Task> act = async () => await _servicio.RealizarOfertaAsync(monto, compradorId, publicacionId);
 
+            // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
-                     .WithMessage("La publicacion ya no existe");
+                     .WithMessage("La publicación no existe.");
         }
 
         [Fact]
         public async Task AceptarOfertaAsync_CuandoOfertaExiste_LlamaRepositorio()
         {
-            var oferta = new Oferta { Id = 10 };
-            _repoGenericoOfertaMock.Setup(r => r.ObtenerPorIdAsync(10)).ReturnsAsync(oferta);
+            // Arrange
+            var ofertaId = 10;
+            var oferta = new Oferta { Id = ofertaId };
+            _repoGenericoOfertaMock.Setup(r => r.ObtenerPorIdAsync(ofertaId)).ReturnsAsync(oferta);
 
-            await _servicio.AceptarOfertaAsync(10);
+            // Act
+            await _servicio.AceptarOfertaAsync(ofertaId);
 
-            _repoOfertaMock.Verify(r => r.AceptarOfertaAsync(10), Times.Once);
+            // Assert
+            _repoOfertaMock.Verify(r => r.AceptarOfertaAsync(ofertaId), Times.Once);
         }
 
         [Fact]
         public async Task RechazarOfertaAsync_CuandoNoExiste_LanzaExcepcion()
         {
-            _repoGenericoOfertaMock.Setup(r => r.ObtenerPorIdAsync(999))
+            // Arrange
+            int ofertaId = 999;
+            _repoGenericoOfertaMock.Setup(r => r.ObtenerPorIdAsync(ofertaId))
                                    .ReturnsAsync((Oferta)null);
 
-            Func<Task> act = async () => await _servicio.RechazarOfertaAsync(999);
+            // Act
+            Func<Task> act = async () => await _servicio.RechazarOfertaAsync(ofertaId);
 
+            // Assert
             await act.Should().ThrowAsync<InvalidOperationException>()
-                     .WithMessage("No se encontró ninguna oferta con el ID 999.");
+                     .WithMessage($"No se encontró ninguna oferta con el ID {ofertaId}.");
         }
     }
 }

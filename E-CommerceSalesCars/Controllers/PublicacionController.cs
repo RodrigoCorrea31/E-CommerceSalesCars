@@ -5,6 +5,8 @@ using E_CommerceSalesCars.Infraestructura.DTOs.PublicacionDTO;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using E_CommerceSalesCars.Infraestructura.DTOs.PublicacionDTO.E_CommerceSalesCars.Infraestructura.DTOs.PublicacionDTO;
+using E_CommerceSalesCars.Infraestructura.DTOs.OfertaDTO;
+using E_CommerceSalesCars.Infraestructura.DTOs.UsuarioDTO;
 
 namespace E_CommerceSalesCars.Presentacion.Controllers
 {
@@ -56,36 +58,46 @@ namespace E_CommerceSalesCars.Presentacion.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<PublicacionDetalleDto>> GetById(int id)
         {
-            var publicaciones = await _servicio.ObtenerPublicacionesAsync();
-            var pub = publicaciones.FirstOrDefault(p => p.Id == id);
+            var publicacion = await _servicio.ObtenerDetallePorIdAsync(id);
 
-            if (pub == null)
-            {
+            if (publicacion == null)
                 return NotFound();
-            }
 
-            var dto = publicaciones.Select(p => new PublicacionDetalleDto
+            var dto = new PublicacionDetalleDto
             {
-                Id = p.Id,
-                Titulo = p.Titulo,
-                Precio = p.Precio,
-                EsUsado = p.EsUsado,
-                Estado = p.Estado,
+                Id = publicacion.Id,
+                Titulo = publicacion.Titulo,
+                Precio = publicacion.Precio,
+                EsUsado = publicacion.EsUsado,
+                Estado = publicacion.Estado,
                 Vehiculo = new VehiculoDto
                 {
-                    Marca = p.Vehiculo?.Marca,
-                    Modelo = p.Vehiculo?.Modelo,
-                    Anio = p.Vehiculo?.Anio ?? 0,
-                    Kilometraje = p.Vehiculo?.Kilometraje ?? 0,
-                    Combustible = p.Vehiculo?.Combustible ?? 0,
-                    Color = p.Vehiculo?.Color,
+                    Marca = publicacion.Vehiculo?.Marca,
+                    Modelo = publicacion.Vehiculo?.Modelo,
+                    Anio = publicacion.Vehiculo?.Anio ?? 0,
+                    Kilometraje = publicacion.Vehiculo?.Kilometraje ?? 0,
+                    Combustible = publicacion.Vehiculo?.Combustible ?? 0,
+                    Color = publicacion.Vehiculo?.Color,
+                    Imagenes = publicacion.Vehiculo?.Imagenes?.Select(i => new ImagenDto
+                    {
+                        Id = i.Id,
+                        Url = i.Url
+                    }).ToList() ?? new List<ImagenDto>()
+                },
+                Vendedor = new UsuarioDto
+                {
+                    Id = publicacion.Usuario.Id,
+                    Name = publicacion.Usuario.Name,
+                    Email = publicacion.Usuario.Email,
+                    Telefono = publicacion.Usuario.Telefono,
+                    TipoUsuario = publicacion.Usuario is Persona ? "Persona" : "Empresa"
                 }
-            });
-
-
+            };
 
             return Ok(dto);
         }
+
+
 
         [HttpPost]
         [Authorize]
@@ -227,6 +239,95 @@ namespace E_CommerceSalesCars.Presentacion.Controllers
             return NoContent();
         }
 
+        // GET: api/publicacion/mis-publicaciones
+        [HttpGet("mis-publicaciones")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<PublicacionDetalleDto>>> ObtenerMisPublicaciones()
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst("id")?.Value;
+                if (userIdClaim == null)
+                    return Unauthorized("Token inválido o faltante.");
+
+                int usuarioId = int.Parse(userIdClaim);
+
+                var publicaciones = await _servicio.ObtenerPublicacionesDelUsuarioAsync(usuarioId);
+
+                var dtoList = publicaciones.Select(p => new PublicacionDetalleDto
+                {
+                    Id = p.Id,
+                    Titulo = p.Titulo,
+                    Precio = p.Precio,
+                    EsUsado = p.EsUsado,
+                    Estado = p.Estado,
+                    Fecha = p.Fecha,
+                    Vehiculo = new VehiculoDto
+                    {
+                        Marca = p.Vehiculo?.Marca,
+                        Modelo = p.Vehiculo?.Modelo,
+                        Anio = p.Vehiculo?.Anio ?? 0,
+                        Kilometraje = p.Vehiculo?.Kilometraje ?? 0,
+                        Combustible = p.Vehiculo?.Combustible ?? 0,
+                        Color = p.Vehiculo?.Color,
+                        Imagenes = p.Vehiculo?.Imagenes.Select(i => new ImagenDto
+                        {
+                            Id = i.Id,
+                            Url = i.Url
+                        }).ToList() ?? new List<ImagenDto>()
+                    },
+                    Vendedor = new UsuarioDto
+                    {
+                        Id = p.Usuario.Id,
+                        Name = p.Usuario.Name,
+                        Email = p.Usuario.Email,
+                        Telefono = p.Usuario.Telefono,
+                        TipoUsuario = p.Usuario is Persona ? "Persona" : "Empresa"
+                    }
+                });
+
+                return Ok(dtoList);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al obtener tus publicaciones: {ex.Message}");
+            }
+        }
+
+        // GET: api/publicacion/{publicacionId}/ofertas
+        [HttpGet("{publicacionId}/ofertas")]
+        [Authorize] 
+        public async Task<ActionResult<IEnumerable<OfertaDto>>> ObtenerOfertasDePublicacion(int publicacionId)
+        {
+            try
+            {
+                var ofertas = await _servicio.ObtenerOfertasPorPublicacionAsync(publicacionId);
+
+                var dtoList = ofertas.Select(o => new OfertasDePublicacionDTO
+                {
+                    Id = o.Id,
+                    Monto = o.Monto,
+                    Fecha = o.Fecha,
+                    Estado = o.Estado,
+                    Comprador = new UsuarioRespuestaDto
+                    {
+                        Id = o.CompradorOferta.Id,
+                        Nombre = o.CompradorOferta.Name,
+                        Email = o.CompradorOferta.Email,
+                        Telefono = o.CompradorOferta.Telefono,
+                        TipoUsuario = o.CompradorOferta is Persona ? "Persona" : "Empresa"
+                    }
+                });
+
+                return Ok(dtoList);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al obtener las ofertas: {ex.Message}");
+            }
+        }
+
+
         // GET: api/publicacion/filtrar
         [HttpGet("filtrar")]
         public async Task<ActionResult<IEnumerable<PublicacionDetalleDto>>> Filtrar(
@@ -254,8 +355,14 @@ namespace E_CommerceSalesCars.Presentacion.Controllers
                     Kilometraje = p.Vehiculo?.Kilometraje ?? 0,
                     Combustible = p.Vehiculo?.Combustible ?? 0,
                     Color = p.Vehiculo?.Color,
-                }
+                    Imagenes = p.Vehiculo?.Imagenes.Select(i => new ImagenDto
+                    {
+                        Id = i.Id,
+                        Url = i.Url
+                    }).ToList() ?? new List<ImagenDto>()
+                },
             });
+
 
 
             return Ok(dtoList);

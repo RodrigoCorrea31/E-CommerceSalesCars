@@ -1,0 +1,143 @@
+.MisOfertasContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #000000, #af0101);
+  color: #000;
+}
+
+.mis-ofertas-container {
+  max-width: 1000px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  font-family: "Arial", sans-serif;
+  width: 90%;
+}
+
+.mis-ofertas-container h2 {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 1.5rem;
+}
+
+.tabla-ofertas {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  font-size: 1rem;
+}
+
+.tabla-ofertas th {
+  background: linear-gradient(135deg, #000000, #af0101);
+  color: #fff;
+  font-weight: bold;
+  padding: 1rem;
+  border: none;
+  text-transform: uppercase;
+}
+
+.tabla-ofertas td {
+  background-color: #f8f8f8;
+  padding: 0.8rem;
+  text-align: center;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.tabla-ofertas tr {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  text-align: center;
+}
+
+.tabla-ofertas tr:hover {
+  transform: scale(1.01);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.estado {
+  font-weight: bold;
+  text-transform: capitalize;
+  border-radius: 6px;
+  margin-top: 8px;
+  padding: 0.4rem 0.7rem;
+  display: inline-flex;        
+  justify-content: center;     
+  align-items: center;        
+  text-align: center;         
+  min-width: 80px;      
+}
+
+
+.estado.pendiente {
+  color: #f59e0b;
+  background: #fff8e1;
+}
+
+.estado.aceptada {
+  color: #16a34a;
+  background: #e8f5e9;
+}
+
+.estado.rechazada {
+  color: #dc2626;
+  background: #fee2e2;
+}
+
+.estado.cancelada {
+  color: #6b7280;
+  background: #f3f4f6;
+}
+
+.btn-ver-publicacion {
+  background: linear-gradient(135deg, #000000, #af0101);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.25s ease, transform 0.1s ease;
+}
+
+.btn-ver-publicacion:hover {
+  background: linear-gradient(135deg, #2b0000, #d40000);
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .mis-ofertas-container {
+    padding: 1.2rem;
+  }
+
+  .tabla-ofertas {
+    font-size: 0.9rem;
+  }
+
+  .tabla-ofertas th,
+  .tabla-ofertas td {
+    padding: 0.6rem;
+  }
+
+  .btn-ver-publicacion {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabla-ofertas {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .mis-ofertas-container h2 {
+    font-size: 1.4rem;
+  }
+}

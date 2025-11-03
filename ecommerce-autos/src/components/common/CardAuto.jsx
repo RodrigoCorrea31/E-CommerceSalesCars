@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import "../../styles/CardAuto.css";
 
 const mapCombustible = {
@@ -7,10 +8,13 @@ const mapCombustible = {
 };
 
 export default function CardAuto({ publicacion }) {
+  const navigate = useNavigate();
   const imagenPrincipal =
     publicacion?.imagenes?.length > 0
       ? publicacion.imagenes[0]
       : "/placeholder-car.png";
+
+  const verDetalles = () => navigate(`/publicaciones/${publicacion.id}`);
 
   return (
     <div className="card-auto">
@@ -23,38 +27,23 @@ export default function CardAuto({ publicacion }) {
       </div>
 
       <div className="card-auto-body">
-        <h3
-          className="card-auto-titulo"
-          title={publicacion.titulo}
-        >
-          {publicacion.titulo}
-        </h3>
-
+        <h3 className="card-auto-titulo">{publicacion.titulo}</h3>
         <p className="card-auto-sub">
-          {publicacion?.marca} {publicacion?.modelo} · Año: {publicacion?.anio}
+          {publicacion.marca} {publicacion.modelo} · Año: {publicacion.anio}
         </p>
-
         <p className="card-auto-detalle">
-          <span>
-            KMs: {publicacion?.kilometraje?.toLocaleString("es-UY") ?? "N/D"}
-          </span>
-          <span>
-            {" "}· Combustible: {mapCombustible[publicacion?.combustible] ?? "N/D"}
-          </span>
+          KMs: {publicacion.kilometraje?.toLocaleString("es-UY")} ·{" "}
+          Combustible: {mapCombustible[publicacion.combustible]}
         </p>
-
-        <p className="card-auto-detalle">
-          Color: {publicacion?.color || "No especificado"}
-        </p>
-
         <p className="card-auto-precio">
-          USD {publicacion.precio?.toLocaleString("es-UY") ?? "N/D"}
+          USD {publicacion.precio?.toLocaleString("es-UY")}
         </p>
       </div>
 
       <div className="card-auto-actions">
-        <button className="btn-detalles">Ver Detalles</button>
-        <button className="btn-ofertar">Ofertar</button>
+        <button className="btn-detalles" onClick={verDetalles}>
+          Ver Detalles
+        </button>
       </div>
     </div>
   );

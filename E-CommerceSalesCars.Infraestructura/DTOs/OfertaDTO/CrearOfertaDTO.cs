@@ -9,7 +9,6 @@ namespace E_CommerceSalesCars.Infraestructura.DTOs.OfertaDTO
     public class CrearOfertaDTO
     {
         public decimal Monto { get; set; }
-        public int CompradorId { get; set; }
         public int PublicacionId { get; set; }
     }
 }

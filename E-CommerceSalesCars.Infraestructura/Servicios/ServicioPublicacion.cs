@@ -1,5 +1,6 @@
 ﻿using E_CommerceSalesCars.Dominio.Entidades;
 using E_CommerceSalesCars.Dominio.Interfaces;
+using E_CommerceSalesCars.Infraestructura.DTOs.PublicacionDTO.E_CommerceSalesCars.Infraestructura.DTOs.PublicacionDTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -115,17 +116,45 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
             return publicaciones ?? new List<Publicacion>();
         }
 
+        public async Task<Publicacion?> ObtenerDetallePorIdAsync(int id)
+        {
+            return await _repositorioPublicacion.ObtenerPublicacionConDetallesPorIdAsync(id);
+        }
+
+        public async Task<ICollection<Publicacion>> ObtenerPublicacionesDelUsuarioAsync(int usuarioId)
+        {
+            if (usuarioId <= 0)
+                throw new ArgumentException("Id de usuario inválido.");
+
+            var publicaciones = await _repositorioPublicacion.ObtenerPublicacionesPorUsuarioAsync(usuarioId);
+            return publicaciones ?? new List<Publicacion>();
+        }
+
+        public async Task<IEnumerable<Oferta>> ObtenerOfertasPorPublicacionAsync(int publicacionId)
+        {
+            if (publicacionId <= 0)
+                throw new ArgumentException("El ID de la publicación no es válido.");
+
+            var ofertas = await _repositorioPublicacion.ObtenerOfertasPorPublicacionAsync(publicacionId);
+
+            return ofertas ?? new List<Oferta>();
+        }
+
         public async Task<ICollection<Publicacion>> FiltrarPublicacionesAsync(string marca, string modelo, int? anioDesde, int? anioHasta, decimal? precioDesde, decimal? precioHasta)
         {
-            var publicaciones = await _repositorioGenericoPublicacion.ObtenerPorFiltroAsync(p =>
-            (string.IsNullOrWhiteSpace(marca) || p.Vehiculo.Marca.Equals(marca, StringComparison.OrdinalIgnoreCase)) &&
-            (string.IsNullOrWhiteSpace(modelo) || p.Vehiculo.Modelo.Equals(modelo, StringComparison.OrdinalIgnoreCase)) &&
-            (!anioDesde.HasValue || p.Vehiculo.Anio >= anioDesde) &&
-            (!anioHasta.HasValue || p.Vehiculo.Anio <= anioHasta) &&
-            (!precioDesde.HasValue || p.Precio >= precioDesde) &&
-            (!precioHasta.HasValue || p.Precio <= precioHasta));
+            marca = marca?.ToLower();
+            modelo = modelo?.ToLower();
+
+            var publicaciones = await _repositorioPublicacion.FiltrarPublicacionesAsync(p =>
+                (string.IsNullOrWhiteSpace(marca) || p.Vehiculo.Marca.ToLower() == marca) &&
+                (string.IsNullOrWhiteSpace(modelo) || p.Vehiculo.Modelo.ToLower() == modelo) &&
+                (!anioDesde.HasValue || p.Vehiculo.Anio >= anioDesde) &&
+                (!anioHasta.HasValue || p.Vehiculo.Anio <= anioHasta) &&
+                (!precioDesde.HasValue || p.Precio >= precioDesde) &&
+                (!precioHasta.HasValue || p.Precio <= precioHasta));
 
             return publicaciones ?? new List<Publicacion>();
         }
+
     }
 }

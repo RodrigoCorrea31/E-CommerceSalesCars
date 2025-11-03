@@ -2,6 +2,7 @@
 using E_CommerceSalesCars.Dominio.Interfaces;
 using E_CommerceSalesCars.Infraestructura.AuthJWT;
 using E_CommerceSalesCars.Infraestructura.DTOs.OfertaDTO;
+using E_CommerceSalesCars.Infraestructura.DTOs.PublicacionDTO.E_CommerceSalesCars.Infraestructura.DTOs.PublicacionDTO;
 using E_CommerceSalesCars.Infraestructura.DTOs.TransaccionDTO;
 using E_CommerceSalesCars.Infraestructura.DTOs.UsuarioDTO;
 using Microsoft.AspNetCore.Http;
@@ -72,6 +73,24 @@ namespace E_CommerceSalesCars.Controllers
             }
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<UsuarioDto>> GetUsuarioById(int id)
+        {
+            var usuario = await _servicioUsuario.ObtenerPorIdAsync(id);
+            if (usuario == null)
+                return NotFound(new { mensaje = "Usuario no encontrado." });
+
+            var dto = new UsuarioDto
+            {
+                Id = usuario.Id,
+                Name = usuario.Name,
+                Email = usuario.Email,
+                Telefono = usuario.Telefono,
+                TipoUsuario = usuario is Empresa ? "Empresa" : "Persona"
+            };
+
+            return Ok(dto);
+        }
 
         // GET: api/usuarios/{id}/ofertas
         [HttpGet("{id}/ofertas")]
@@ -84,11 +103,14 @@ namespace E_CommerceSalesCars.Controllers
                 Id = o.Id,
                 Monto = o.Monto,
                 Fecha = o.Fecha,
-                Estado = o.Estado.ToString()
+                Estado = o.Estado.ToString(),
+                PublicacionId = o.Publicacion.Id,
+                TituloPublicacion = o.Publicacion.Titulo
             });
 
             return Ok(dto);
         }
+
 
         // GET: api/usuarios/{id}/compras
         [HttpGet("{id}/compras")]
@@ -102,7 +124,9 @@ namespace E_CommerceSalesCars.Controllers
                 Fecha = c.Fecha,
                 PrecioVenta = c.PrecioVenta,
                 Estado = c.Estado.ToString(),
-                MetodoDePago = c.MetodoDePago
+                MetodoDePago = c.MetodoDePago,
+                VendedorNombre = c.Vendedor?.Name,
+                PublicacionTitulo = c.Publicacion?.Titulo
             });
 
             return Ok(dto);
@@ -120,10 +144,13 @@ namespace E_CommerceSalesCars.Controllers
                 Fecha = v.Fecha,
                 PrecioVenta = v.PrecioVenta,
                 Estado = v.Estado.ToString(),
-                MetodoDePago = v.MetodoDePago
+                MetodoDePago = v.MetodoDePago,
+                CompradorNombre = v.CompradorTransaccion?.Name,
+                PublicacionTitulo = v.Publicacion?.Titulo
             });
 
             return Ok(dto);
         }
+
     }
 }

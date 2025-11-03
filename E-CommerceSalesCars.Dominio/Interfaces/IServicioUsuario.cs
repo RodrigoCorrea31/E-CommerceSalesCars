@@ -11,6 +11,7 @@ namespace E_CommerceSalesCars.Dominio.Interfaces
     {
         Task RegistrarUsuarioAsync(string tipoUsuario, string nombre, string email, string telefono, string contrasena, string datoExtra1, string datoExtra2);
         Task<Usuario> LoginAsync(string email, string contraseña);
+        Task<Usuario> ObtenerPorIdAsync(int id);
         Task<ICollection<Oferta>> ObtenerOfertasRealizadasAsync(int usuarioId);
         Task<ICollection<Transaccion>> ObtenerComprasAsync(int usuarioId);
         Task<ICollection<Transaccion>> ObtenerVentasAsync(int usuarioId);

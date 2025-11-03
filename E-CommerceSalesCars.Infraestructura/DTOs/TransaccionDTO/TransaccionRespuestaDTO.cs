@@ -12,11 +12,13 @@ namespace E_CommerceSalesCars.Infraestructura.DTOs.TransaccionDTO
         public DateTime Fecha { get; set; }
         public DateTime? FechaFinalizacion { get; set; }
         public decimal PrecioVenta { get; set; }
-        public string Observacion { get; set; }
         public string Estado { get; set; }
         public string MetodoDePago { get; set; }
+        public string Observacion { get; set; }
         public int CompradorId { get; set; }
         public int VendedorId { get; set; }
         public int PublicacionId { get; set; }
     }
+
+
 }

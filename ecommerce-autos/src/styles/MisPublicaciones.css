@@ -1,0 +1,231 @@
+.MisPublicacionesContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #000000, #af0101);
+  color: #000;
+}
+
+.mis-publicaciones-container {
+  max-width: 1000px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  font-family: "Arial", sans-serif;
+  width: 90%;
+}
+
+.mis-publicaciones-container h2 {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 1.5rem;
+}
+
+.tabla-publicaciones {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  font-size: 1rem;
+}
+
+.tabla-publicaciones th {
+  background: linear-gradient(135deg, #000000, #af0101);
+  color: #fff;
+  font-weight: bold;
+  padding: 1rem;
+  border: none;
+  text-transform: uppercase;
+}
+
+.tabla-publicaciones td {
+  background-color: #f8f8f8;
+  padding: 0.8rem;
+  text-align: center;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.tabla-publicaciones tr {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  text-align: center;
+}
+
+.tabla-publicaciones tr:hover {
+  transform: scale(1.01);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.estado {
+  font-weight: bold;
+  text-transform: capitalize;
+  border-radius: 6px;
+  padding: 0.4rem 0.7rem;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-width: 80px;
+}
+
+.estado.activo {
+  color: #16a34a;
+  background: #e8f5e9;
+}
+
+.estado.vendido {
+  color: #dc2626;
+  background: #fee2e2;
+}
+
+.estado.pausado {
+  color: #f59e0b;
+  background: #fff8e1;
+}
+
+.btn-ver-publicacion,
+.btn-ver-ofertas {
+  background: linear-gradient(135deg, #000000, #af0101);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.25s ease, transform 0.1s ease;
+  margin: 0 0.3rem;
+}
+
+.btn-ver-publicacion:hover,
+.btn-ver-ofertas:hover {
+  background: linear-gradient(135deg, #2b0000, #d40000);
+  transform: scale(1.05);
+}
+
+.ofertas-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.ofertas-content {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 900px;
+  position: relative;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  overflow-y: auto;
+  max-height: 80vh;
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.btn-cerrar {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 1.6rem;
+  cursor: pointer;
+  color: #af0101;
+  transition: transform 0.2s ease;
+}
+
+.btn-cerrar:hover {
+  transform: scale(1.2);
+  color: #d40000;
+}
+
+.tabla-ofertas {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+
+.tabla-ofertas th,
+.tabla-ofertas td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.tabla-ofertas th {
+  background: linear-gradient(135deg, #000000, #af0101);
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.tabla-ofertas tr:hover td {
+  background: #fafafa;
+}
+
+.ofertas-loading,
+.ofertas-error {
+  text-align: center;
+  margin: 1rem 0;
+  color: #000;
+}
+
+@media (max-width: 768px) {
+  .mis-publicaciones-container {
+    padding: 1.2rem;
+  }
+
+  .tabla-publicaciones,
+  .tabla-ofertas {
+    font-size: 0.9rem;
+  }
+
+  .tabla-publicaciones th,
+  .tabla-publicaciones td {
+    padding: 0.6rem;
+  }
+
+  .btn-ver-publicacion,
+  .btn-ver-ofertas {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .ofertas-content {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabla-publicaciones,
+  .tabla-ofertas {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .mis-publicaciones-container h2 {
+    font-size: 1.4rem;
+  }
+}

@@ -22,6 +22,8 @@ namespace E_CommerceSalesCars.Dominio.Entidades
 
         [Required]
         public string ContrasenaHash { get; set; }
+        [InverseProperty("Usuario")]
+        public ICollection<Publicacion> Publicaciones { get; set; } = new List<Publicacion>();
 
         [InverseProperty("CompradorTransaccion")]
         public ICollection<Transaccion> Compras { get; set;} = new List<Transaccion>();

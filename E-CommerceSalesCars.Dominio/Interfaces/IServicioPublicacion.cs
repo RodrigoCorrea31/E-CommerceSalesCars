@@ -13,6 +13,9 @@ namespace E_CommerceSalesCars.Dominio.Interfaces
         Task EditarPublicacionAsync(int id, Publicacion publicacion);
         Task EliminarPublicacionAsync(int id);
         Task<ICollection<Publicacion>> ObtenerPublicacionesAsync();
+        Task<Publicacion?> ObtenerDetallePorIdAsync(int id);
+        Task<ICollection<Publicacion>> ObtenerPublicacionesDelUsuarioAsync(int usuarioId);
+        Task<IEnumerable<Oferta>> ObtenerOfertasPorPublicacionAsync(int publicacionId);
         Task<ICollection<Publicacion>> FiltrarPublicacionesAsync(string marca, string modelo, int? anioDesde, int? anioHasta, decimal? precioDesde, decimal? precioHasta);
     }
 }

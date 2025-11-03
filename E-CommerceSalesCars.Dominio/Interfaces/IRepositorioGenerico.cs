@@ -12,9 +12,9 @@ namespace E_CommerceSalesCars.Dominio.Interfaces
         Task<E> ObtenerPorIdAsync(int id);
         Task<ICollection<E>> ListarTodosAsync();
         Task AgregarAsync(E Entidad);
-        void ModificarAsync(E Entidad);
+        Task ModificarAsync(E Entidad);
         Task ActualizarAsync(E entidad);
-        void EliminarAsync(E Entidad);
+        Task EliminarAsync(E Entidad);
         Task<ICollection<E>> ObtenerPorFiltroAsync(Expression<Func<E, bool>> filtro);
     }
 }

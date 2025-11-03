@@ -1,5 +1,38 @@
 import api from "./axiosConfig";
 
-export const crearOferta = (data) => api.post("/ofertas", data);
-export const aceptarOferta = (id) => api.post(`/ofertas/${id}/aceptar`);
-export const rechazarOferta = (id) => api.post(`/ofertas/${id}/rechazar`);
+export const crearOferta = (data, token) =>
+  api.post("/ofertas", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+export const getOfertaById = (id, token) =>
+  api.get(`/ofertas/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+
+export const aceptarOferta = async (id) => {
+  const token = localStorage.getItem("token");
+
+  const response = await api.post(`/ofertas/${id}/aceptar`, null, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+};
+
+export const rechazarOferta = async (id) => {
+  const token = localStorage.getItem("token");
+
+  const response = await api.post(`/ofertas/${id}/rechazar`, null, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+};

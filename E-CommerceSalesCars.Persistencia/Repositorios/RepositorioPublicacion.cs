@@ -30,9 +30,41 @@ namespace E_CommerceSalesCars.Persistencia.Repositorios
                 .ToListAsync();
         }
 
+        public async Task<Publicacion?> ObtenerPublicacionConDetallesPorIdAsync(int id)
+        {
+            return await _dbset
+                .Include(p => p.Vehiculo)
+                    .ThenInclude(v => v.Imagenes)
+                .Include(p => p.Usuario)
+                .FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task<ICollection<Publicacion>> ObtenerPublicacionesPorUsuarioAsync(int usuarioId)
+        {
+            return await _dbset
+                .Include(p => p.Vehiculo)
+                    .ThenInclude(v => v.Imagenes)
+                .Include(p => p.Usuario)
+                .Where(p => p.UsuarioId == usuarioId)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Oferta>> ObtenerOfertasPorPublicacionAsync(int publicacionId)
+        {
+            return await _context.Ofertas
+                .Include(o => o.CompradorOferta)
+                .Where(o => o.PublicacionId == publicacionId)
+                .ToListAsync();
+        }
+
         public async Task<ICollection<Publicacion>> FiltrarPublicacionesAsync(Expression<Func<Publicacion, bool>> filtro)
         {
-            return await _dbset.Include(p => p.Vehiculo).Where(filtro).ToListAsync();
+            return await _dbset
+                .Include(p => p.Vehiculo)
+                    .ThenInclude(v => v.Imagenes)
+                .Where(filtro)
+                .ToListAsync();
         }
+
     }
 }

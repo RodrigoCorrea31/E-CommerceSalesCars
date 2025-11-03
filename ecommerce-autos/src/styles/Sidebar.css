@@ -81,6 +81,19 @@
   color: #af0101;
 }
 
+.sidebar-panel li a {
+  text-decoration: none;
+  color: inherit;         
+  font-weight: inherit;  
+  display: block;         
+  transition: color 0.3s;
+}
+
+.sidebar-panel li a:hover {
+  color: #af0101; 
+}
+
+
 @media (max-width: 1024px) {
   .sidebar {
     width: 220px;

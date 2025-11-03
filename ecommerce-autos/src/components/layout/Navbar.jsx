@@ -18,35 +18,64 @@ export default function Navbar() {
     setMenuAbierto(!menuAbierto);
   };
 
+  const handleLinkClick = () => {
+    setMenuAbierto(false);
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-logo">
-        <Link to="/">
+        <Link to="/" onClick={handleLinkClick}>
           <img src={LogoESC} alt="E-Commerce Autos" className="logo-img" />
         </Link>
       </div>
 
-      <button className={`hamburger ${menuAbierto ? "active" : ""}`} onClick={toggleMenu}>
+      <button
+        className={`hamburger ${menuAbierto ? "active" : ""}`}
+        onClick={toggleMenu}
+      >
         <span></span>
         <span></span>
         <span></span>
       </button>
 
       <ul className={`navbar-links ${menuAbierto ? "open" : ""}`}>
-        <li><Link to="/" onClick={() => setMenuAbierto(false)}>Inicio</Link></li>
-        <li><Link to="/publicaciones/crear" onClick={() => setMenuAbierto(false)}>Publicar Vehículo</Link></li>
-        <li><Link to="/ofertas" onClick={() => setMenuAbierto(false)}>Ofertas</Link></li>
-        <li><Link to="/transacciones" onClick={() => setMenuAbierto(false)}>Mis Compras/Ventas</Link></li>
+        <li>
+          <Link to="/" onClick={handleLinkClick}>Inicio</Link>
+        </li>
+        <li>
+          <Link to="/publicaciones/crear" onClick={handleLinkClick}>
+            Publicar Vehículo
+          </Link>
+        </li>
+        <li>
+          <Link to="/ofertas" onClick={handleLinkClick}>Ofertas</Link>
+        </li>
+        <li>
+          <Link to="/mis-transacciones" onClick={handleLinkClick}>
+            Mis Compras/Ventas
+          </Link>
+        </li>
+        <li>
+          <Link to="/mis-publicaciones" onClick={handleLinkClick}>
+            Mis Publicaciones
+          </Link>
+        </li>
       </ul>
 
       <div className="navbar-user">
         {usuario ? (
           <>
             <span>Hola, {usuario.nombre}</span>
-            <button onClick={handleLogout} className="navbar-btn">Salir</button>
+            <button onClick={handleLogout} className="navbar-btn">
+              Salir
+            </button>
           </>
         ) : (
-          <button onClick={() => navigate("/login")} className="navbar-btn">
+          <button
+            onClick={() => navigate("/login")}
+            className="navbar-btn"
+          >
             Ingresar
           </button>
         )}

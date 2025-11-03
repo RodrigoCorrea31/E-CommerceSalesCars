@@ -13,5 +13,9 @@ namespace E_CommerceSalesCars.Infraestructura.DTOs.TransaccionDTO
         public decimal PrecioVenta { get; set; }
         public string Estado { get; set; }
         public string MetodoDePago { get; set; }
+        public string CompradorNombre { get; set; }
+        public string VendedorNombre { get; set; }
+        public string PublicacionTitulo { get; set; }
     }
+
 }

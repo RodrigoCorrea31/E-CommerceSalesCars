@@ -37,14 +37,16 @@ namespace E_CommerceSalesCars.Persistencia.Repositorios
             await _context.SaveChangesAsync();
         }
 
-        public void EliminarAsync(E entidad)
+        public async Task EliminarAsync(E entidad)
         {
             _dbset.Remove(entidad);
+            await _context.SaveChangesAsync();
         }
 
-        public void ModificarAsync(E entidad)
+        public async Task ModificarAsync(E entidad)
         {
             _dbset.Update(entidad);
+            await _context.SaveChangesAsync();
         }
 
         public async Task ActualizarAsync(E entidad)
@@ -53,11 +55,10 @@ namespace E_CommerceSalesCars.Persistencia.Repositorios
             await _context.SaveChangesAsync();
         }
 
-
-
         public async Task<ICollection<E>> ObtenerPorFiltroAsync(Expression<Func<E, bool>>filtro)
         {
             return await _dbset.Where(filtro).ToListAsync();
         }
+
     }
 }

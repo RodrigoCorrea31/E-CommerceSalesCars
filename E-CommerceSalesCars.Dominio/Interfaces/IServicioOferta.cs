@@ -9,7 +9,8 @@ namespace E_CommerceSalesCars.Dominio.Interfaces
 {
     public interface IServicioOferta
     {
-        Task RealizarOfertaAsync(Oferta oferta);
+        Task<Oferta> RealizarOfertaAsync(decimal monto, int compradorId, int publicacionId);
+        Task<Oferta> ObtenerPorIdAsync(int id);
         Task AceptarOfertaAsync(int ofertaId);
         Task RechazarOfertaAsync(int ofertaId);
     }

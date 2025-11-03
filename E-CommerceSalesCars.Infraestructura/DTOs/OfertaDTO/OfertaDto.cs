@@ -12,5 +12,7 @@ namespace E_CommerceSalesCars.Infraestructura.DTOs.OfertaDTO
         public decimal Monto { get; set; }
         public DateTime Fecha { get; set; }
         public string Estado { get; set; }
+        public int PublicacionId { get; set; }
+        public string TituloPublicacion { get; set; }
     }
 }

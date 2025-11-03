@@ -81,7 +81,6 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
                 throw new ArgumentException("Tipo de usuario no válido. Debe ser 'persona' o 'empresa'.");
             }
 
-            // 🔑 IMPORTANTE: hashear antes de guardar
             var hasher = new PasswordHasher<Usuario>();
             nuevoUsuario.ContrasenaHash = hasher.HashPassword(nuevoUsuario, contrasena);
 
@@ -117,6 +116,11 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
 
             return usuario;
         }
+        public async Task<Usuario> ObtenerPorIdAsync(int id)
+        {
+            var usuario = await _repositorioGenericoUsuario.ObtenerPorIdAsync(id);
+            return usuario;
+        }
 
         public async Task<ICollection<Oferta>> ObtenerOfertasRealizadasAsync(int usuarioId)
         {
@@ -138,36 +142,27 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
         public async Task<ICollection<Transaccion>> ObtenerComprasAsync(int usuarioId)
         {
             if (usuarioId <= 0)
-            {
-                throw new ArgumentOutOfRangeException("El id debe ser mayor a 0.", nameof(usuarioId));
-            }
+                throw new ArgumentOutOfRangeException(nameof(usuarioId));
 
             var usuario = await _repositorioGenericoUsuario.ObtenerPorIdAsync(usuarioId);
             if (usuario == null)
-            {
-                throw new InvalidOperationException($"No se encontró el usuario con ID: {usuarioId}");
-            }
+                throw new InvalidOperationException($"No se encontró el usuario con ID {usuarioId}");
 
-            var compras = await _repositorioUsuario.ObtenerComprasAsync(usuarioId);
-            return compras ?? new List<Transaccion>();
+            return await _repositorioUsuario.ObtenerComprasAsync(usuarioId);
         }
 
         public async Task<ICollection<Transaccion>> ObtenerVentasAsync(int usuarioId)
         {
             if (usuarioId <= 0)
-            {
-                throw new ArgumentOutOfRangeException("El id debe ser mayor a 0.", nameof(usuarioId));
-            }
+                throw new ArgumentOutOfRangeException(nameof(usuarioId));
 
             var usuario = await _repositorioGenericoUsuario.ObtenerPorIdAsync(usuarioId);
             if (usuario == null)
-            {
-                throw new InvalidOperationException($"No se encontró un usuario con el ID: {usuarioId}");
-            }
+                throw new InvalidOperationException($"No se encontró el usuario con ID {usuarioId}");
 
-            var ventas = await _repositorioUsuario.ObtenerVentasAsync(usuarioId);
-            return ventas ?? new List<Transaccion>();
+            return await _repositorioUsuario.ObtenerVentasAsync(usuarioId);
         }
+
 
         public async Task ComprarVehiculoAsync(int usuarioId, int publicacionId, decimal monto)
         {

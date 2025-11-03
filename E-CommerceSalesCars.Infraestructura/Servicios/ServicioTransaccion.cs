@@ -13,50 +13,66 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
         private readonly IRepositorioTransaccion _repositorioTransaccion;
         private readonly IRepositorioGenerico<Transaccion> _repositorioGenericoTransaccion;
         private readonly IRepositorioGenerico<Usuario> _repositorioGenericoUsuario;
+        private readonly IRepositorioGenerico<Oferta> _repositorioGenericoOferta;
+        private readonly IRepositorioGenerico<Publicacion> _repositorioGenericoPublicacion;
 
-        public ServicioTransaccion (IRepositorioTransaccion repositorioTransaccion, IRepositorioGenerico<Transaccion> repositorioGenericoTransaccion, IRepositorioGenerico<Usuario> repositorioGenericoUsuario)
+        public ServicioTransaccion (IRepositorioTransaccion repositorioTransaccion, IRepositorioGenerico<Transaccion> repositorioGenericoTransaccion, IRepositorioGenerico<Usuario> repositorioGenericoUsuario, IRepositorioGenerico<Oferta> repositorioGenericoOferta, IRepositorioGenerico<Publicacion> repositorioGenericoPublicacion)
         {
             _repositorioTransaccion = repositorioTransaccion;
             _repositorioGenericoTransaccion = repositorioGenericoTransaccion;
             _repositorioGenericoUsuario = repositorioGenericoUsuario;
+            _repositorioGenericoOferta = repositorioGenericoOferta;
+            _repositorioGenericoPublicacion = repositorioGenericoPublicacion;
         }
 
-        public async Task FinalizarTransaccionAsync (int transaccionId)
+        public async Task<Transaccion> FinalizarTransaccionAsync(int ofertaId)
         {
-            if (transaccionId <= 0)
+            if (ofertaId <= 0)
+                throw new ArgumentException("El id de la oferta no es válido.", nameof(ofertaId));
+
+            var oferta = await _repositorioGenericoOferta.ObtenerPorIdAsync(ofertaId);
+            if (oferta == null)
+                throw new InvalidOperationException("La oferta no existe.");
+
+            var publicacion = await _repositorioGenericoPublicacion.ObtenerPorIdAsync(oferta.PublicacionId);
+            if (publicacion == null)
+                throw new InvalidOperationException("La publicación asociada a la oferta no existe.");
+
+            if (publicacion.Estado != EstadoPublicacion.Activo)
+                throw new InvalidOperationException("La publicación ya no está disponible.");
+
+            oferta.Estado = EstadoOferta.Aceptada;
+            publicacion.Estado = EstadoPublicacion.Vendido;
+
+            var otrasOfertas = await _repositorioGenericoOferta.ObtenerPorFiltroAsync(o =>
+                o.PublicacionId == publicacion.Id && o.Id != oferta.Id);
+            foreach (var o in otrasOfertas)
+                o.Estado = EstadoOferta.Rechazada;
+
+            var transaccion = new Transaccion
             {
-                throw new ArgumentException("El id ingresado no  es válido.", nameof(transaccionId));
-            }
+                PublicacionId = publicacion.Id,
+                CompradorId = oferta.CompradorId,
+                VendedorId = publicacion.UsuarioId,
+                PrecioVenta = oferta.Monto,
+                Fecha = DateTime.UtcNow,
+                Estado = EstadoTransaccion.Finalizada,
+                MetodoDePago = "No especificado",
+                Observacion = "Sin observaciones"
+            };
 
-            var transaccion = await _repositorioGenericoTransaccion.ObtenerPorIdAsync(transaccionId);
-            if (transaccion == null)
-            {
-                throw new InvalidOperationException("La transaccion que se intenta finalizar no existe.");
-            }
-
-            if (transaccion.Estado == EstadoTransaccion.Finalizada)
-            {
-                throw new InvalidOperationException("Esta transaccion ya fue finalizada.");
-            }
-
-
-            transaccion.Estado = EstadoTransaccion.Finalizada;
-            transaccion.FechaFinalizacion = DateTime.UtcNow;
+            await _repositorioGenericoTransaccion.AgregarAsync(transaccion);
 
             var comprador = await _repositorioGenericoUsuario.ObtenerPorIdAsync(transaccion.CompradorId);
             var vendedor = await _repositorioGenericoUsuario.ObtenerPorIdAsync(transaccion.VendedorId);
 
-            if (comprador == null || vendedor == null)
-            {
-                throw new InvalidOperationException("No se encontró el comprador o el vendedor.");
-            }
-
-            comprador.Compras.Add(transaccion);
-            vendedor.Ventas.Add(transaccion);
-
-            await _repositorioGenericoTransaccion.ActualizarAsync(transaccion);
             await _repositorioGenericoUsuario.ActualizarAsync(comprador);
             await _repositorioGenericoUsuario.ActualizarAsync(vendedor);
+            await _repositorioGenericoPublicacion.ActualizarAsync(publicacion);
+
+            return transaccion;
         }
+
+
     }
 }
