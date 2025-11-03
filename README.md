@@ -97,5 +97,7 @@ http://localhost:5173
 
 ## Autor
 Rodrigo Correa
+
 Correo electrónico: rodrigocorreamuse@gmail.com
+
 Mi perfil de LinkedIn[LinkedIn](https://www.linkedin.com/in/rodrigo-correa-b868b1368/)
