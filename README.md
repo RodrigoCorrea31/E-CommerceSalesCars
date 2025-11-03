@@ -93,7 +93,9 @@ Abrir en el navegador:
 
 http://localhost:5173
 
+
+
 ## Autor
 Rodrigo Correa
-rodrigocorreamuse@gmail.com
-[Rodrigo Correa - LinkedIn](https://www.linkedin.com/in/rodrigo-correa-b868b1368/)
+Correo electrónico: rodrigocorreamuse@gmail.com
+Mi perfil de LinkedIn[LinkedIn](https://www.linkedin.com/in/rodrigo-correa-b868b1368/)
