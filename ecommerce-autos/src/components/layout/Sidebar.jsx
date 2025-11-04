@@ -14,7 +14,7 @@ export default function Sidebar({ abierto, onAplicarFiltros }) {
   const marcas = [
     "Alfa Romeo", "Aston Martin", "Audi", "BMW", "Cadillac", "Chery", "Chevrolet", "Chevy",
     "Citroën", "Dodge", "Fiat", "Ford", "Foton", "GMC", "Great Wall", "Honda", "Hyundai",
-    "Jeep", "Kia", "Land Rover", "Lexus", "Lifan", "Mazda", "Mercedes-Benz", "Mini",
+    "Jeep", "Jetour", "Kia", "Land Rover", "Lexus", "Lifan", "Mazda", "Mercedes-Benz", "Mini",
     "Mitsubishi", "Nissan", "Opel", "Peugeot", "Porsche", "Ram", "Renault", "Rolls-Royce",
     "Seat", "Subaru", "Suzuki", "Toyota", "Volkswagen", "Volvo"
   ].sort();

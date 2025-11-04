@@ -10,7 +10,6 @@ const Home = () => {
   const { publicaciones, loading, aplicarFiltros } = usePublicaciones();
   const [sidebarAbierto, setSidebarAbierto] = useState(false);
 
-  // Variables para detectar swipe
   let touchStartX = 0;
   let touchEndX = 0;
 
@@ -21,10 +20,8 @@ const Home = () => {
   const handleTouchEnd = (e) => {
     touchEndX = e.changedTouches[0].screenX;
     if (touchEndX - touchStartX > 50) {
-      // swipe a la derecha
       setSidebarAbierto(true);
     } else if (touchStartX - touchEndX > 50) {
-      // swipe a la izquierda
       setSidebarAbierto(false);
     }
   };
