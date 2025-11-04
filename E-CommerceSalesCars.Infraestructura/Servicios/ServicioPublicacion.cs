@@ -1,5 +1,6 @@
 ﻿using E_CommerceSalesCars.Dominio.Entidades;
 using E_CommerceSalesCars.Dominio.Interfaces;
+using E_CommerceSalesCars.Infraestructura.DTOs.PublicacionDTO;
 using E_CommerceSalesCars.Infraestructura.DTOs.PublicacionDTO.E_CommerceSalesCars.Infraestructura.DTOs.PublicacionDTO;
 using System;
 using System.Collections.Generic;
@@ -15,12 +16,14 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
         private readonly IRepositorioPublicacion _repositorioPublicacion;
         private readonly IRepositorioGenerico<Publicacion> _repositorioGenericoPublicacion;
         private readonly IRepositorioGenerico<Usuario> _repositorioGenericoUsuario;
+        private readonly IRepositorioGenerico<Vehiculo> _repositorioGenericoVehiculo;
 
-        public ServicioPublicacion(IRepositorioPublicacion repositorioPublicacion, IRepositorioGenerico<Usuario> repositorioGenericoUsuario, IRepositorioGenerico<Publicacion> repositorioGenericoPublicacion)
+        public ServicioPublicacion(IRepositorioPublicacion repositorioPublicacion, IRepositorioGenerico<Usuario> repositorioGenericoUsuario, IRepositorioGenerico<Publicacion> repositorioGenericoPublicacion, IRepositorioGenerico<Vehiculo> repositorioGenericoVehiculo)
         {
             _repositorioPublicacion = repositorioPublicacion;
             _repositorioGenericoPublicacion = repositorioGenericoPublicacion;
             _repositorioGenericoUsuario = repositorioGenericoUsuario;
+            _repositorioGenericoVehiculo = repositorioGenericoVehiculo;
         }
         public async Task CrearPublicacionAsync(Publicacion publicacion)
         {
@@ -53,62 +56,71 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
         public async Task EditarPublicacionAsync(int id, Publicacion publicacion)
         {
             if (id <= 0)
-            {
-                throw new ArgumentException("Id invalido para editar publicacion");
-            }
+                throw new ArgumentException("Id inválido para editar publicación.");
 
             if (publicacion == null)
-            {
                 throw new ArgumentNullException(nameof(publicacion));
-            }
 
             if (id != publicacion.Id)
-            {
-                throw new ArgumentException("El Id proporcionado no coincide con el de la publicacion");
-            }
+                throw new ArgumentException("El Id proporcionado no coincide con el de la publicación.");
 
-            if (string.IsNullOrWhiteSpace(publicacion.Titulo))
-            {
-                throw new ArgumentNullException("La publicacion debe tener titulo");
-            }
+            var publicaciones = await _repositorioPublicacion.ObtenerPublicacionesConVehiculoAsync();
+            var existente = publicaciones.FirstOrDefault(p => p.Id == id);
 
-            if (publicacion.UsuarioId <= 0)
-            {
-                throw new ArgumentException("Usuario invalido");
-            }
-
-            var publicacionExiste = await _repositorioGenericoPublicacion.ObtenerPorIdAsync(id);
-            if(publicacionExiste == null)
-            {
+            if (existente == null)
                 throw new InvalidOperationException($"No existe una publicación con el id: {id}");
-            }
 
-            var publicaciones = await _repositorioGenericoPublicacion.ListarTodosAsync();
-            if (publicaciones.Any(p => p.Id != publicacion.Id && p.Titulo == publicacion.Titulo && p.UsuarioId == publicacion.UsuarioId))
+            var duplicado = publicaciones.Any(p =>
+                p.Id != id &&
+                p.Titulo == publicacion.Titulo &&
+                p.UsuarioId == existente.UsuarioId);
+
+            if (duplicado)
+                throw new InvalidOperationException("Ya existe una publicación con este título para este usuario.");
+
+            existente.Titulo = publicacion.Titulo;
+            existente.Precio = publicacion.Precio;
+            existente.EsUsado = publicacion.EsUsado;
+            existente.Estado = publicacion.Estado;
+
+            var vehiculo = existente.Vehiculo;
+            vehiculo.Marca = publicacion.Vehiculo.Marca;
+            vehiculo.Modelo = publicacion.Vehiculo.Modelo;
+            vehiculo.Anio = publicacion.Vehiculo.Anio;
+            vehiculo.Kilometraje = publicacion.Vehiculo.Kilometraje;
+            vehiculo.Combustible = publicacion.Vehiculo.Combustible;
+            vehiculo.Color = publicacion.Vehiculo.Color;
+
+            if (publicacion.Vehiculo.Imagenes?.Any() == true)
             {
-                throw new InvalidOperationException("Ya existe una publicacion con este titulo para este usuario");
+                foreach (var img in publicacion.Vehiculo.Imagenes)
+                {
+                    vehiculo.Imagenes.Add(img);
+                }
             }
 
-             _repositorioGenericoPublicacion.ModificarAsync(publicacion);
+            await _repositorioGenericoVehiculo.ActualizarAsync(vehiculo);
+            await _repositorioGenericoPublicacion.ActualizarAsync(existente);
         }
 
         public async Task EliminarPublicacionAsync(int id)
         {
-
             if (id <= 0)
-            {
-                throw new ArgumentException("El id es invalido");
-            }
+                throw new ArgumentException("El id es inválido");
 
             var publicacion = await _repositorioGenericoPublicacion.ObtenerPorIdAsync(id);
 
             if (publicacion == null)
+                throw new InvalidOperationException($"No existe una publicación con el id: {id}");
+
+            var vehiculo = await _repositorioGenericoVehiculo.ObtenerPorIdAsync(publicacion.VehiculoId);
+            if (vehiculo != null)
             {
-                throw new InvalidOperationException($"No existe una aplicacion con el id: {id}");
+                await _repositorioGenericoVehiculo.EliminarAsync(vehiculo);
             }
 
-            _repositorioGenericoPublicacion.EliminarAsync(publicacion);
         }
+
 
         public async Task<ICollection<Publicacion>> ObtenerPublicacionesAsync()
         {

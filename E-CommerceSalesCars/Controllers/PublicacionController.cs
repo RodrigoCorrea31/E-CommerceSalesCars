@@ -209,27 +209,55 @@ namespace E_CommerceSalesCars.Presentacion.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> Editar(int id, [FromBody] PublicacionEditarDto dto)
         {
-            if (id != dto.Id)
+            try
             {
-                return BadRequest("El id no coincide");
+                if (id != dto.Id)
+                    return BadRequest("El id no coincide.");
+
+                var publicacion = new Publicacion
+                {
+                    Id = dto.Id,
+                    Titulo = dto.Titulo,
+                    Precio = dto.Precio,
+                    EsUsado = dto.EsUsado,
+                    Estado = dto.Estado,
+                    Vehiculo = new Vehiculo
+                    {
+                        Marca = dto.Marca,
+                        Modelo = dto.Modelo,
+                        Anio = dto.Anio,
+                        Kilometraje = dto.Kilometraje,
+                        Combustible = dto.Combustible,
+                        Color = dto.Color
+                    }
+                };
+
+                if (dto.NuevasImagenesBase64 != null && dto.NuevasImagenesBase64.Any())
+                {
+                    foreach (var imgBase64 in dto.NuevasImagenesBase64)
+                    {
+                        publicacion.Vehiculo.Imagenes.Add(new ImagenVehiculo { Url = imgBase64 });
+                    }
+                }
+
+                await _servicio.EditarPublicacionAsync(id, publicacion);
+
+                return NoContent();
             }
-
-            var pub = new Publicacion
+            catch (ArgumentException ex)
             {
-                Id = dto.Id,
-                Titulo = dto.Titulo,
-                Precio = dto.Precio,
-                EsUsado = dto.EsUsado,
-                Estado = dto.Estado,
-                VehiculoId = dto.VehiculoId,
-                UsuarioId = dto.UsuarioId,
-                Fecha = DateTime.UtcNow
-            };
-
-            await _servicio.EditarPublicacionAsync(id, pub);
-
-            return NoContent();
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { error = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Ocurrió un error inesperado al editar la publicación.");
+            }
         }
+
 
         // DELETE: api/publicacion/{id}
         [HttpDelete("{id}")]

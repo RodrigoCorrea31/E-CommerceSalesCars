@@ -14,7 +14,14 @@ namespace E_CommerceSalesCars.Infraestructura.DTOs.PublicacionDTO
         public decimal Precio { get; set; }
         public bool EsUsado { get; set; }
         public EstadoPublicacion Estado { get; set; }
-        public int VehiculoId { get; set; }
-        public int UsuarioId { get; set; }
+
+        public string Marca { get; set; }
+        public string Modelo { get; set; }
+        public int Anio { get; set; }
+        public int Kilometraje { get; set; }
+        public Combustible Combustible { get; set; }
+        public string Color { get; set; }
+
+        public List<string>? NuevasImagenesBase64 { get; set; }
     }
 }

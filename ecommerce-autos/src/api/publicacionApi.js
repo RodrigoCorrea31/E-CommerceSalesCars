@@ -36,6 +36,12 @@ export const getMisPublicaciones = (token) =>
   });
 
 
-export const editarPublicacion = (id, data) => api.put(`/publicacion/${id}`, data);
+export const editarPublicacion = (id, data, token) =>
+  api.put(`/publicacion/${id}`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
 export const eliminarPublicacion = (id) => api.delete(`/publicacion/${id}`);
 export const filtrarPublicaciones = (params) => api.get("/publicacion", { params });

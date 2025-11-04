@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
 import { useAuth } from "../../context/AuthContext";
-import { getMisPublicaciones } from "../../api/publicacionApi";
+import { getMisPublicaciones, eliminarPublicacion } from "../../api/publicacionApi";
 import { useNavigate } from "react-router-dom";
 import "../../styles/MisPublicaciones.css";
 
@@ -11,6 +11,8 @@ export default function MisPublicaciones() {
   const [publicaciones, setPublicaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [publicacionSeleccionada, setPublicacionSeleccionada] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,13 +35,37 @@ export default function MisPublicaciones() {
     }
   }, [usuario]);
 
+  const abrirModalEliminar = (publicacion) => {
+    setPublicacionSeleccionada(publicacion);
+    setMostrarModal(true);
+  };
+
+  const cerrarModal = () => {
+    setMostrarModal(false);
+    setPublicacionSeleccionada(null);
+  };
+
+  const confirmarEliminacion = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await eliminarPublicacion(publicacionSeleccionada.id, token);
+      setPublicaciones((prev) =>
+        prev.filter((p) => p.id !== publicacionSeleccionada.id)
+      );
+      cerrarModal();
+    } catch (err) {
+      console.error(err);
+      alert("Error al eliminar la publicación.");
+    }
+  };
+
   if (!usuario) {
     return (
       <div className="MisOfertasContainer">
         <Navbar />
         <div className="login-requerido-container">
           <h2>No has iniciado sesión</h2>
-          <p>Debes iniciar sesión para ver tus ofertas realizadas.</p>
+          <p>Debes iniciar sesión para ver tus publicaciones.</p>
           <button
             className="btn-ir-login"
             onClick={() =>
@@ -127,18 +153,32 @@ export default function MisPublicaciones() {
                       ? new Date(pub.fecha).toLocaleDateString()
                       : "Sin fecha"}
                   </td>
-                  <td>
+                  <td className="acciones-publicacion">
                     <button
                       className="btn-ver-publicacion"
                       onClick={() => navigate(`/publicaciones/${pub.id}`)}
                     >
-                      Ver Publicacion
+                      Ver
                     </button>
                     <button
                       className="btn-ver-ofertas"
-                      onClick={() => navigate(`/mis-publicaciones/${pub.id}/ofertas`)}
+                      onClick={() =>
+                        navigate(`/mis-publicaciones/${pub.id}/ofertas`)
+                      }
                     >
-                      Ver Ofertas
+                      Ofertas
+                    </button>
+                    <button
+                      className="btn-editar"
+                      onClick={() => navigate(`/editar-publicacion/${pub.id}`)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="btn-eliminar"
+                      onClick={() => abrirModalEliminar(pub)}
+                    >
+                      Eliminar
                     </button>
                   </td>
                 </tr>
@@ -147,6 +187,27 @@ export default function MisPublicaciones() {
           </table>
         )}
       </div>
+
+      {mostrarModal && (
+        <div className="modal-overlay">
+          <div className="modal-contenido">
+            <h3>¿Eliminar publicación?</h3>
+            <p>
+              ¿Seguro que deseas eliminar la publicación "
+              <strong>{publicacionSeleccionada?.titulo}</strong>"?
+            </p>
+            <div className="modal-botones">
+              <button className="btn-cancelar" onClick={cerrarModal}>
+                Cancelar
+              </button>
+              <button className="btn-confirmar" onClick={confirmarEliminacion}>
+                Sí, eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </div>
   );

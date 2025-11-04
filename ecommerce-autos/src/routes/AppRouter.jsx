@@ -9,6 +9,7 @@ import MisPublicaciones from '../pages/Publicaciones/MisPublicaciones';
 import OfertasPorPublicacion from '../pages/Publicaciones/OfertasPorPublicacion';
 import FinalizarTransaccion from '../pages/Transacciones/FinalizarTransaccion';
 import MisTransacciones from '../pages/Usuarios/MisTransacciones';
+import EditarPublicacion from '../pages/Publicaciones/EditarPublicacion';
 
 export default function AppRouter() {
     return (
@@ -24,6 +25,7 @@ export default function AppRouter() {
                 <Route path="/mis-publicaciones/:id/ofertas" element={<OfertasPorPublicacion />} />
                 <Route path="/finalizar-transaccion/:id" element={<FinalizarTransaccion />} />
                 <Route path="/mis-transacciones" element={<MisTransacciones />} />
+                <Route path="/editar-publicacion/:id" element={<EditarPublicacion />} />
             </Routes>
         </BrowserRouter>
     );
