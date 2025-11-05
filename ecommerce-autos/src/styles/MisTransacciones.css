@@ -110,11 +110,17 @@
   background: #fee2e2;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
   .tabla-transacciones th,
   .tabla-transacciones td {
     padding: 0.6rem;
     font-size: 0.9rem;
+  }
+
+  .tabla-transacciones {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
   }
 
   .tabs button {

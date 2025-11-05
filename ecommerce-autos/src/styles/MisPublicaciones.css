@@ -289,9 +289,16 @@
 }
 
 
-@media (max-width: 768px) {
+@media (max-width: 1070px) {
   .mis-publicaciones-container {
     padding: 1.2rem;
+  }
+
+  .tabla-publicaciones,
+  .tabla-ofertas {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
   }
 
   .tabla-publicaciones,

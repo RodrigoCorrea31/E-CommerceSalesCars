@@ -64,6 +64,10 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
 
             var oferta = await _repositorioGenericoOferta.ObtenerPorIdAsync(id);
 
+            if(oferta.Estado == EstadoOferta.Aceptada)
+                throw new InvalidOperationException("No se puede eliminar esta oferta porque ya fue aceptada");
+            
+
             if (oferta == null)
                 throw new InvalidOperationException($"No existe una oferta con el id: {id}");
 
