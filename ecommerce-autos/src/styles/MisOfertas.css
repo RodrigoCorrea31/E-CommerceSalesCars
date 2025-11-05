@@ -110,6 +110,118 @@
   transform: scale(1.05);
 }
 
+.btn-eliminar-oferta {
+  background: linear-gradient(135deg, #000000, #af0101);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.25s ease, transform 0.1s ease;
+}
+
+.btn-eliminar-oferta:hover {
+  background: linear-gradient(135deg, #2b0000, #d40000);
+  transform: scale(1.05);
+}
+
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 10, 10, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.modal-contenido {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  width: 90%;
+  max-width: 420px;
+  text-align: center;
+  animation: slideUp 0.25s ease-out;
+}
+
+.modal-contenido h3 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: #222;
+}
+
+.modal-contenido p {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 1.8rem;
+  line-height: 1.4;
+}
+
+.modal-botones {
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem;
+}
+
+.btn-cancelar,
+.btn-confirmar-eliminar {
+  border: none;
+  padding: 0.8rem 1.4rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+}
+
+.btn-cancelar {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.btn-cancelar:hover {
+  background-color: #cfcfcf;
+}
+
+.btn-confirmar-eliminar {
+  background-color: #e53935;
+  color: #fff;
+  font-weight: bold;
+}
+
+.btn-confirmar-eliminar:hover {
+  background-color: #c62828;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
 @media (max-width: 768px) {
   .mis-ofertas-container {
     padding: 1.2rem;

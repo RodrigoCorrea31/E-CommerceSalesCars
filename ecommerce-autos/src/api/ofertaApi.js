@@ -7,6 +7,19 @@ export const crearOferta = (data, token) =>
     },
   });
 
+  export const eliminarOferta = async (id) => {
+  const token = localStorage.getItem("token");
+
+  const response = await api.delete(`/ofertas/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+};
+
+
 export const getOfertaById = (id, token) =>
   api.get(`/ofertas/${id}`, {
     headers: { Authorization: `Bearer ${token}` },

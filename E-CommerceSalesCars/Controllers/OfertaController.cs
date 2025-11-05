@@ -57,6 +57,13 @@ namespace E_CommerceSalesCars.Controllers
             }
         }
 
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Eliminar(int id)
+        {
+            await _servicioOferta.EliminarOfertaAsync(id);
+            return NoContent();
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Oferta>> ObtenerPorId(int id)
         {

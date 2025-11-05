@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { obtenerOfertasUsuario } from "../../api/usuarioApi";
+import { eliminarOferta } from "../../api/ofertaApi";
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -12,6 +13,9 @@ export default function MisOfertas() {
   const [ofertas, setOfertas] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalInfoVisible, setModalInfoVisible] = useState(false);
+  const [ofertaSeleccionada, setOfertaSeleccionada] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -35,6 +39,40 @@ export default function MisOfertas() {
 
     cargarOfertas();
   }, [usuario]);
+
+  const abrirModalEliminar = (oferta) => {
+    if (oferta.estado.toLowerCase() === "aceptada") {
+      setOfertaSeleccionada(oferta);
+      setModalInfoVisible(true); 
+      return;
+    }
+    setOfertaSeleccionada(oferta);
+    setModalVisible(true);
+  };
+
+  const cerrarModal = () => {
+    setModalVisible(false);
+    setOfertaSeleccionada(null);
+  };
+
+  const cerrarModalInfo = () => {
+    setModalInfoVisible(false);
+    setOfertaSeleccionada(null);
+  };
+
+  const confirmarEliminar = async () => {
+    try {
+      await eliminarOferta(ofertaSeleccionada.id);
+      setOfertas((prev) =>
+        prev.filter((oferta) => oferta.id !== ofertaSeleccionada.id)
+      );
+      cerrarModal();
+    } catch (err) {
+      console.error("Error eliminando la oferta:", err);
+      alert("Ocurrió un error al eliminar la oferta.");
+      cerrarModal();
+    }
+  };
 
   if (cargando) return <p>Cargando tus ofertas...</p>;
   if (error) return <p>{error}</p>;
@@ -75,7 +113,7 @@ export default function MisOfertas() {
                 <th>Monto</th>
                 <th>Fecha</th>
                 <th>Estado</th>
-                <th>Acción</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -87,12 +125,20 @@ export default function MisOfertas() {
                   <td className={`estado ${oferta.estado.toLowerCase()}`}>
                     {oferta.estado}
                   </td>
-                  <td>
+                  <td className="acciones">
                     <button
                       className="btn-ver-publicacion"
-                      onClick={() => navigate(`/publicaciones/${oferta.publicacionId}`)}
+                      onClick={() =>
+                        navigate(`/publicaciones/${oferta.publicacionId}`)
+                      }
                     >
                       Ver publicación
+                    </button>
+                    <button
+                      className="btn-eliminar-oferta"
+                      onClick={() => abrirModalEliminar(oferta)}
+                    >
+                      Eliminar oferta
                     </button>
                   </td>
                 </tr>
@@ -101,6 +147,47 @@ export default function MisOfertas() {
           </table>
         )}
       </div>
+
+      {modalVisible && (
+        <div className="modal-overlay">
+          <div className="modal-contenido">
+            <h3>Confirmar eliminación</h3>
+            <p>
+              ¿Estás seguro de que deseas eliminar la oferta por{" "}
+              <strong>${ofertaSeleccionada?.monto}</strong> en{" "}
+              <strong>{ofertaSeleccionada?.tituloPublicacion}</strong>?
+            </p>
+            <div className="modal-botones">
+              <button className="btn-cancelar" onClick={cerrarModal}>
+                Cancelar
+              </button>
+              <button
+                className="btn-confirmar-eliminar"
+                onClick={confirmarEliminar}
+              >
+                Sí, eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {modalInfoVisible && (
+        <div className="modal-overlay">
+          <div className="modal-contenido">
+            <h3>Acción no permitida</h3>
+            <p>
+              No puedes eliminar una oferta que ya fue <strong>aceptada</strong>.
+            </p>
+            <div className="modal-botones">
+              <button className="btn-confirmar-eliminar" onClick={cerrarModalInfo}>
+                Entendido
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </div>
   );

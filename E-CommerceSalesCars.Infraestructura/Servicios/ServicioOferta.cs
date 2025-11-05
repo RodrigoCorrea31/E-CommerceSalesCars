@@ -55,6 +55,21 @@ namespace E_CommerceSalesCars.Infraestructura.Servicios
             return oferta;
         }
 
+        public async Task EliminarOfertaAsync(int id)
+        {
+            if(id <= 0)
+            {
+                throw new ArgumentException("El id es inválido");
+            }
+
+            var oferta = await _repositorioGenericoOferta.ObtenerPorIdAsync(id);
+
+            if (oferta == null)
+                throw new InvalidOperationException($"No existe una oferta con el id: {id}");
+
+            await _repositorioGenericoOferta.EliminarAsync(oferta);
+        }
+
         public async Task<Oferta> ObtenerPorIdAsync(int id)
         {
             var oferta = await _repositorioGenericoOferta.ObtenerPorIdAsync(id);
